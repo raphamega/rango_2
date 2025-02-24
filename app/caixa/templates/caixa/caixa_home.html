@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+<!--{#% include 'base/alerta.html' with notificacao=notificacao %}-->
+<div class="container" xmlns:currency="http://www.w3.org/1999/xhtml"><br/>
+    <h1 class="text-center" >Registro de Entrada e Saida do Caixa</h1>
+<form action="{% url 'caixa:caixa_add' %}" data-point="{% url 'caixa:caixa_add' %}"  method="POST">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-md-8">
+            <div class="row">
+                <div class="col-md-10">
+                    {{form.descricao.label}}
+                    {{form.descricao}}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-5">
+                    {{form.valor.label}}
+                    {{form.valor}}
+                </div>
+                <div class="col-md-3">
+                    {{form.tipo.label}}
+                    {{form.tipo}}
+                </div>
+                <div class="col-md-2">
+                    <br/>
+                    <input type="submit" class="btn btn-success btn-block" value="Registrar">
+                </div>
+                
+            </div>
+        </div>
+        <div class="col-md-4 pull-right">
+            <div class="money" style="color:green;">
+                <h4><strong>Entrada <span class="pull-right">R$: {{ent|safe}}</span></strong></h4>
+            </div>
+            <div class="money" style="color:red;">
+                <h4><strong>Saida <span class="pull-right">R$: {{sai|safe}}</span></strong></h4>
+            </div>
+            {%if saldo >= 0%}
+            <div class="money" style="color:blue;">
+                <h3><strong>Saldo <span class="pull-right">R$: {{saldo|safe}}</span></strong></h3>
+            </div>
+            {%else%}
+            <div class="money" style="color:red;">
+                <h3><strong>Saldo <span class="pull-right">R$: {{saldo|safe}}</span></strong></h3>
+                    <h4>Saldo Negativo no Caixa</h4>
+            </div>
+            {%endif%}
+        </div>
+
+    </div>
+   
+
+</form>
+</div>
+<br/>
+<div class="container">
+
+    {% if lista.exists %}
+    <table class="table table-striped">
+        <thead>
+            <h1 class="text-center">Movimento do Caixa</h1>
+            <tr>
+                {% comment %} <th>Código</th> {% endcomment %}
+                <th>Data</th>
+                <th>Descrição</th>
+                <th class="text-center" >Valor</th>
+                <th class="text-center">Tipo</th>
+            </tr>
+        </thead>
+        <tbody>
+         {% for object in lista %}   
+            {% if object.tipo == "e" %}
+                <tr style="color:green;">
+                    <td>{{object.data}}</td>
+                    <td>{{object.descricao|truncatewords_html:10|safe}}</td>
+                    <td>R$ <span class="pull-right">{{object.valor}}</span></td>
+                    <td class="text-center"> Entrada </td>
+                </tr>
+            {%else %}
+                <tr style="color:red;">
+                    {% comment %} <td>{{object.id}}</td> {% endcomment %}
+                    <td>{{object.data}}</td>
+                    <td>{{object.descricao}}</td>
+                    <td>R$ <span class="pull-right">{{object.valor|safe}}</span></td>
+                    <td class="text-center"> Saida </td>
+                </tr>
+            {% endif %}
+         {% endfor %}
+        </tbody>
+    </table>
+{% else %}    
+    <p class="alert alert-warning">Sem itens na lista.</p>
+{% endif %}    
+
+</div>
+<script>
+        result = valor4.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'});
+        document.getElementById('result').value=result;
+</script>
+{% endblock content %}
+    

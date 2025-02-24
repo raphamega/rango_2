@@ -1,0 +1,20 @@
+<div class="pull-center">
+    <form action="{#% url 'produto:abrir_fecha_Loja' %}"  method="POST" enctype="multipart/form-data" >
+        {%csrf_token%}
+        
+        <input type="hidden" name="loja_id" value="{{loja.id}}">
+        <input type="hidden" name="pedido_id" value="{{pedido.id}}">
+        <h1><button type="submit"  class="btn btn-light" onclick="recarregarAPagina()" >    
+            {% if loja.status == True %}
+            <strong class="btn btn-success" >Loja Aberta</strong>
+            {% else %}
+            <strong class="btn btn-danger" >Loja Fechada</strong>
+            {%endif%}
+        </button></h1>
+    </form>  
+</div>
+<script>
+    function recarregarAPagina(){
+        window.locawindow.location.reload(true);
+    } 
+</script>

@@ -1,0 +1,144 @@
+{% extends 'base.html'  %}
+{% block css %}
+    <style>
+        .ok{
+            color:green;
+        }
+        .no{
+            color:red;
+        }
+    </style>
+{% endblock css %}
+{% block content %}
+{% comment %} {% include 'loja/base/alerta.html' with notificacao=notificacao %} {% endcomment %}
+<div class="container">
+    {{loja}}
+    <div class="page-header">
+        {% comment %} <h2><i class="fa fa-user"></i></h2> <h3>{{user}}</h3> {% endcomment %}
+        <h2>Lista de produto
+            <span class="pull-right">
+                <a href="{% url 'produto:produto_add' %}">
+                    <button type="button" class="btn btn-primary">
+                        <span class="fa fa-plus"></span>
+                        Adicionar
+                    </button>
+                </a>
+            </span>
+        </h2>
+        {% if object_list %}
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th >Código</th>
+                        <th >Ativo</th>
+                        <th >Produto</th>
+                        <th >Categoria</th>
+                        <th class="text-center">Preço</th>
+                        <th class="text-center">Estoque Minimo</th>
+                        <th class="text-center">Estoque Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for object in object_list %}   
+                {% if object.estoque == 0 %}
+                <tr style="color:red;">
+                    <td>{{object.id}}</td>
+                    <th>{% if object.ativo == False  %}
+                        <p style="color:red;">Não</p>
+                        {%else%}
+                        <p style="color:green;">Sim</p>       
+                        {%endif%}
+                    </th>
+                    <td><a href="{{object.get_absolute_url}}">{{object.nome}}</a></td>
+                     <td >
+                        {% if object.categoria == "m"%}
+                            Materia-Prima
+
+                        {% elif object.categoria == "b" %}
+                            Bebida
+
+                        {% elif object.categoria == "a" %}
+                            Acrescimo
+
+                        {% else %}
+                            Produto-Final
+
+                        {% endif %}
+
+                    </td>
+                    <td>R$ <span class="pull-right">{{object.preco}}</span></td>
+                    <td class="text-center">{{object.estoque_minimo}}</td>
+                    <td class="text-center">{{object.estoque}}</td>
+                </tr>
+                {% elif  object.estoque <= object.estoque_minimo %}
+                <tr style="color:orange;">
+                    <td>{{object.id}}</td>
+                    <th>{% if object.ativo == False  %}
+                        <p style="color:red;">Não</p>
+                        {%else%}
+                        <p style="color:green;">Sim</p>       
+                        {%endif%}
+                    </th>
+                    <td><a href="{{object.get_absolute_url}}">{{object.nome}}</a></td>
+                    <td >
+                        {% if object.categoria == "m"%}
+                            Materia-Prima
+
+                        {% elif object.categoria == "b" %}
+                            Bebida
+
+                        {% elif object.categoria == "a" %}
+                            Acrescimo
+
+                        {% else %}
+                            Produto-Final
+
+                        {% endif %}
+
+                    </td>
+                    <td>R$ <span class="pull-right">{{object.preco}}</span></td>
+                    <td class="text-center">{{object.estoque_minimo}}</td>
+                    <td class="text-center">{{object.estoque}}</td>
+                </tr>
+                {%else%}
+                <tr style="color:green;" >
+                    <td>{{object.id}}</td>
+                    <th>{% if object.ativo == False  %}
+                        <p style="color:red;">Não</p>
+                        {%else%}
+                        <p style="color:green;">Sim</p>       
+                        {%endif%}
+                    </th>
+                    <td><a href="{{object.get_absolute_url}}">{{object.nome}}</a></td>
+                     <td >
+                        {% if object.categoria == "m"%}
+                            Materia-Prima
+
+                        {% elif object.categoria == "b" %}
+                            Bebida
+
+                        {% elif object.categoria == "a" %}
+                            Acrescimo
+
+                        {% else %}
+                            Produto-Final
+
+                        {% endif %}
+
+                    </td>
+                    <td>R$ <span class="pull-right">{{object.preco}}</span></td>
+                    <td class="text-center">{{object.estoque_minimo}}</td>
+                    <td class="text-center">{{object.estoque}}</td>
+                </tr>
+                {% endif%}
+                
+                {% endfor %}
+                </tbody>
+            </table>
+        {% else %}    
+            <p class="alert alert-warning">Sem itens na lista.</p>
+        {% endif %}    
+
+    </div>
+</div>
+{% endblock %}

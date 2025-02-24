@@ -1,0 +1,11 @@
+
+<form method="POST" action="{%url 'estoque:gerar_nota' %}" class="form" >
+    {%csrf_token%}
+    <input type="hidden" name="nota_id"  value="{{nota.id}}"/>
+    <button type="submit" class="btn btn-success" >
+        <i class="fa fa-floppy-o">
+            Gerar Nota !
+        </i>
+    </button>
+</form>
+

@@ -1,0 +1,108 @@
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title" id="myModalLabel">Pedido:{{relate.id}}</h4>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div id="print" class="conteudo">
+                <div class="form-group col-md-12">
+                        <div class="form-group" >
+                            <div>
+                                <strong><h2>Pedido: {{pedido.id}} ola </h2></strong>
+                                <h5>{{pedido.nome}}</h5>
+                                <h5>{{pedido.telefone}}</h5>
+                            </div>
+                            <strong>Lanche Lista:</strong><br>
+                            &nbsp;{{pedido.pedido|safe}}
+                            <div class="form-group">
+
+                            <h4><strong>R$: {{pedido.total_pedido}}</strong></h4>
+                                {%if pedido.dinheiro > 0 %}
+                                    Dinheiro: R$ {{pedido.dinheiro}}<br/>
+                                {%endif%}
+                                {%if pedido.pix > 0 %}
+                                    Pix: R$ {{pedido.pix}}<br/>
+                                {%endif%}
+                                {%if pedido.debito > 0 %}
+                                    C .Debito: R$: {{pedido.debito}}<br/>
+                                {%endif%}
+                                {%if pedido.credito > 0 %}
+                                    C. Credito: R$ {{pedido.credito}}<br/>
+                                {%endif%}
+
+                                {%if faltante > 0%}
+                                <h4><strong>Troco: R$ {{frm_pg}}</strong></h4>
+                                {%endif%}
+                            <h3><strong> </strong></h3>
+                        </div>
+                            <p>-------------corte-aqui----------------</p>
+                            <div class="container">
+                        <h2><strong>Cozinha</strong></h2>
+                        <h4><strong>Pedido: {{pedido.id}} </strong></h4>
+                            <strong>LISTA DE PEDIDOS :</strong><br/>
+                            {{pedido.pedido|safe}}
+                        </div>
+                            <p>-------------corte-aqui----------------</p>
+                            <div class="container">
+                            <h2><strong>Entrega</strong></h2>
+                            <h4><strong>Pedido: {{pedido.id}} </strong></h4>
+                            <p>
+                            &nbsp;{{pedido.nome}} <br/>
+                            {%if pedido.endereco%}
+                            &nbsp;{{pedido.telefone}}<br/>
+                            &nbsp;{{pedido.endereco}}, {{pedido.numero}}<br/>
+                            &nbsp;{{pedido.complemento}}<br/>
+                            &nbsp;{{pedido.bairro}}<br/>
+                            &nbsp;{{pedido.municipio}}-{{pedido.uf}}<br/>
+                        {%endif%}
+                            </p>
+                            <h4><strong>R$: {{pedido.total_pedido}}</strong></h4>
+                                {%if pedido.dinheiro > 0 %}
+                                    Dinheiro: R$ {{pedido.dinheiro}}<br/>
+                                {%endif%}
+                                {%if pedido.pix > 0 %}
+                                    Pix: R$ {{pedido.pix}}<br/>
+                                {%endif%}
+                                {%if pedido.debito > 0 %}
+                                    C .Debito: R$: {{pedido.debito}}<br/>
+                                {%endif%}
+                                {%if pedido.credito > 0 %}
+                                    C. Credito: R$ {{pedido.credito}}<br/>
+                                {%endif%}
+
+                                {%if faltante > 0 %}
+                                <h4><strong>Troco: R$ {{faltante}}</strong></h4>
+                                {%endif%}
+                            <h3><strong> </strong></h3>
+                        </div>
+
+                        </div>
+                    </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            {% if faltante >= 0 %}
+                     <button type="submit" onclick="cont()" class="btn btn-primary">Imprimir</button>
+            {% endif%}
+        </div>
+      </div>
+    </div>
+ </div>
+ 
+<script>
+     function voltar() {
+       window.history.back();
+     }
+</script>
+<script>
+         function cont(){
+             var conteudo = document.getElementById('print').innerHTML;
+             tela_impressao = window.open('about:blank');
+             tela_impressao.document.write(conteudo);
+             tela_impressao.window.print();
+             tela_impressao.window.close();
+         }
+     
+</script>

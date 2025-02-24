@@ -1,0 +1,15 @@
+<form method='POST' action="{% url 'caixa:pedido_Item' %}" data-endpoint="{% url 'caixa:pedido_Item' %}" class="form">
+
+    {% csrf_token %}
+
+    <div class="container">
+        <input type="hidden" name="loja_id" value="{{loja.id}}" />
+        <input type="hidden" name="produto_id" value="{{produto.id}}" />
+        <input type="hidden" name="pedido_id" value="{{pedido.id}}" />
+        <span class='submit-span'>
+            <button type='submit' class='btn btn-success'>
+                <i type='submit'  class="fa fa-shopping-cart"></i>
+            </button>
+        </span>
+    </div>
+</form>

@@ -1,0 +1,13 @@
+{% load crispy_forms_tags %}
+{% for notificacao in notificacao%}
+    <div class="notify">
+        <div class="actor">
+             {{notificacao.actor}}   
+        </div>
+        <div class="verb">
+             {{notificacao.verb}}
+             <p>{{notificacao.description}}</p>
+        </div>
+    </div>
+    <br/>   
+{%endfor%}

@@ -1,0 +1,118 @@
+{% extends 'base.html'%}
+{% load static %}
+{% load crispy_forms_tags %}
+{%block content%}
+
+<div class="form-group">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="container" style="width: 100%; border-right: 1px solid #000000;">
+                {{mes}}
+                <div class="form-group">
+                    <button type="button" class="btn btn-primary btn-block fa fa-plus" data-bs-toggle="modal" data-bs-target="#criar_mesa">
+                        Mesa
+                    </button>
+                </div>
+                <div class="form-group">
+                    {% if mesa.exists %}
+                        {% for m in mesa%}
+                        <div class="card border-success mb-12" style="max-width: 15rem; max-height: 10rem;">
+                            <div class="card-header">
+                                <div class="row">
+                                    <div class="col-md-10">
+                                        <h5>Mesa: {{m.numero}}</h5>
+                                    </div>
+                                    <div class="col-md-2">
+                                        {% if m.total == 0.00 %}
+                                            <a href="{% url 'pedido:mesa_delete' m.id %}" >
+                                                <i class="fa fa-close "></i>
+                                            </a>
+                                        {% endif %}    
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body text-success">
+                                <a href="{{m.get_mesa_url}}" >
+                                    <h5 class="card-title">R$: {{m.total}}</h5>
+                                </a>
+                            </div>
+                        </div>
+                        <br/>
+                        {% endfor %}
+                    {% else %}
+                        <p class="alert alert-warning">Sem mesa na lista.</p>
+                    {% endif %}
+                
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="container" style="width: 100%; border-right: 1px solid #000000;">
+                <div class="form-group">
+                    <form method="POST" action="{% url 'pedido:pedido_criar' %}" data-endpoint="{% url 'pedido:pedido_criar' %}">
+                        {% csrf_token%}
+                        <a type="submit" href="{%url 'pedido:pedido_criar'%}"  class="btn btn-primary  btn-block fa fa-plus"> Pedido</a>
+                    </form>
+                </div>
+                <div class="form-group">
+                    {% if pedido.exists %}
+                        {% for m in pedido%}
+                            <div class="card border-success mb-12" style="max-width: 15rem; max-height: 10rem;">
+                                <div class="card-header">
+                                    <div class="row">
+                                        <div class="col-md-10">
+                                            <h5>Pedido: {{m.id}}</h5>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <a href="{% url 'pedido:pedido_delete' m.id %}" >
+                                                <i class="fa fa-close "></i>
+                                            </a>    
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-body text-success">
+                                    <a href="{{m.get_pedido_url}}" >
+                                        <h5 class="card-title">{{m.total_pedido}}</h5>
+                                        <p class="card-text">{{m.venda}}</p>
+                                    </a>
+                                </div>
+                            </div>
+                            <br/>
+                        {% endfor %}
+                    {% else %}
+                        <p class="alert alert-warning">Sem pedido na lista.</p>
+                    {% endif %}
+                </div>
+
+            </div>
+        </div>
+        <div class="col-md-6">
+            {% include 'caixa/registradora_list.html' with enviado=enviado pedido=pedido recebido=recebido entrega=entrega finalizado=finalizado %}
+        </div>
+
+    </div>
+
+</div>
+
+<form method="POST" action="{% url 'pedido:mesa_criar' %}" data-endpoint="{% url 'pedido:mesa_criar' %}">
+    {% csrf_token %}
+    <div class="modal fade" id="criar_mesa" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="criar_mesaLabel">N° Mesa :</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" name='mesa' id="id_mesa" class="form-control" />
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Abrir Mesa</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+{%endblock%}

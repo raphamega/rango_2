@@ -1,0 +1,856 @@
+<div class="form-group">
+
+<div class="col-md-12">
+    <div class="form-group">
+        <button type="button" class="btn btn-primary btn-block ">
+            Movimento dos Pedidos
+        </button>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group form-center" style="max-width: 15rem;" >
+                {% if recebido %}
+                {% for relata in enviado%}
+                <div class="container">
+                    <div class="card border-primary mb-3" style="max-width: 10rem; max-height: 10rem;">
+                        <div class="row">
+                            <div class="col-md-10">
+                                    <form action="{#% url 'produto:aceitar_pedido' %}" method="POST" style="width: 100%; border-bottom: 1px solid #000000; ">
+                                        {% csrf_token%}
+                            <div class="card-header">Entrada</div>
+                            <div class="card-body text-primary">
+                                <h5 class="card-title">{{relata.tipo}} {{relata.numero| truncatewords:7}}</h5>
+                                <p class="card-text"> R$: {{relata.total_pedido}}.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="container">
+                        <input type="submit" class="btn btn-success btn-block-sm" value="Aceitar">
+                        <input type="submit" class="btn btn-danger btn-block-sm" value="Rejeitar">
+                    </div>
+                    <br/>
+                </form>
+                <br/>
+                {% endfor %}
+                {% for relata in recebido%}
+                    <input type="hidden" name="relata_id" value="{{relata.id}}"> 
+                    <div class="card border-success mb-12" style="max-width: 15rem; max-height: 10rem; left:5px ">
+                        <div class="card-header"> 
+                            <form method="POST" action="{% url 'pedido:pedido_pronto' relata.id %}" >
+                                {% csrf_token%}
+                                Cozinha <span class"full-right"> <button type="submit" class="btn btn-hight btn-sm">
+                                <i class="fa fa-check"></i></button> </span>
+                            </form>    
+                        </div>
+                        <div class="card-body text-success">
+                            <a type="button" href="#" data-bs-toggle="modal" data-bs-target="#myModal{{relata.id}}" >
+                                <i type='submit'  class="fa fa-print">
+                                    <p> Pedido: {{relata.id}} - {{relata.venda}} <p>
+                                    <h5 class="card-title">R$: {{relata.total_pedido}}.</h5>
+                                </i>    
+                            </a>
+                            <div class="modal fade" style="color:black;" id="myModal{{relata.id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <figure>
+                                                        <img id="logo" name="logo"  src="{{request.user.loja.image.url}}" style="width:100px; height:100px; margin-left:10px;; margin-right:10px; " >
+                                                    </figure>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <h2>{{request.user.loja}}</h2>
+                                                    <a>{{request.user.loja.telefone}}</a><br/>
+                                                    <a>{{request.user.loja.cnpj}}</a>
+                                                </div>    
+                                            </div>    
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body"  >
+                                            {% if relata.venda == "Balcão" %}
+                                            
+                                            <div id="print" class="conteudo">
+                                                <div class="form-group col-md-12">
+                                                        <div class="form-group" >
+                                                            <div>
+                                                                <h5>{{relata.venda}}</h5>
+                                                            </div>
+                                                            <strong>Lanche Lista:</strong><br>
+                                                            &nbsp;{{relata.pedido|safe}}
+                                                            <div class="form-group">
+                                                                <h4><strong>R$: {{relata.total_pedido}}</strong></h4>
+                                                                    {%if relata.dinheiro > 0 %}
+                                                                        Dinheiro: R$ {{relata.dinheiro}}<br/>
+                                                                    {%endif%}
+                                                                    {%if relata.pix > 0 %}
+                                                                        Pix: R$ {{relata.pix}}<br/>
+                                                                    {%endif%}
+                                                                    {%if relata.debito > 0 %}
+                                                                        C .Debito: R$: {{relata.debito}}<br/>
+                                                                    {%endif%}
+                                                                    {%if relata.credito > 0 %}
+                                                                        C. Credito: R$ {{relata.credito}}<br/>
+                                                                    {%endif%}
+                                    
+                                                                    {%if faltante > 0%}
+                                                                    <h4><strong>Troco: R$ {{frm_pg}}</strong></h4>
+                                                                    {%endif%}
+                                                                <h3><strong> </strong></h3>
+                                                            </div>
+                                                            <p>-------------corte-aqui----------------</p>
+                                                            <div class="container">
+                                                                <h2 class="text-center"><strong>Cozinha</strong></h2>
+                                                                <h4><strong>Pedido: {{relata.id}} </strong></h4>
+                                                                <strong>LISTA DE PEDIDOS :</strong><br/>
+                                                                {{relata.pedido|safe}}
+                                                            </div>
+                                                            <p>-------------corte-aqui----------------</p>
+                                                            <div class="container">
+                                                            <h2><strong>Entrega</strong></h2>
+                                                            <h4><strong>Pedido: {{relata.id}} </strong></h4>
+                                                            <h4>
+                                                            &nbsp;{{relata.venda}}
+                                                            </h4>
+                                                            <h4><strong>R$: {{relata.total_pedido}}</strong></h4>
+                                                                {%if relata.dinheiro > 0 %}
+                                                                    Dinheiro: R$ {{relata.dinheiro}}<br/>
+                                                                {%endif%}
+                                                                {%if relata.pix > 0 %}
+                                                                    Pix: R$ {{relata.pix}}<br/>
+                                                                {%endif%}
+                                                                {%if relata.debito > 0 %}
+                                                                    C .Debito: R$: {{relata.debito}}<br/>
+                                                                {%endif%}
+                                                                {%if relata.credito > 0 %}
+                                                                    C. Credito: R$ {{relata.credito}}<br/>
+                                                                {%endif%}
+                                
+                                                                {%if faltante > 0 %}
+                                                                <h4><strong>Troco: R$ {{faltante}}</strong></h4>
+                                                                {%endif%}
+                                                            <h3><strong> </strong></h3>
+                                                        </div>
+                                
+                                                        </div>
+                                                    </div>
+                                            </div>
+                                            {% elif relata.venda == "Mesa" %}
+                                            <div id="print" class="conteudo">
+                                                <div class="form-group col-md-12">
+                                                    
+                                                        <div class="form-group" >
+                                                            <div>
+                                                                <h5>{{relata.venda}}</h5>
+                                                            </div>
+                                                            <strong>Lanche Lista:</strong><br>
+                                                            &nbsp;{{relata.pedido|safe}}
+                                                            <div class="form-group">
+                                                                <h4><strong>R$: {{relata.total_pedido}}</strong></h4>
+                                                                    {%if relata.dinheiro > 0 %}
+                                                                        Dinheiro: R$ {{relata.dinheiro}}<br/>
+                                                                    {%endif%}
+                                                                    {%if relata.pix > 0 %}
+                                                                        Pix: R$ {{relata.pix}}<br/>
+                                                                    {%endif%}
+                                                                    {%if relata.debito > 0 %}
+                                                                        C .Debito: R$: {{relata.debito}}<br/>
+                                                                    {%endif%}
+                                                                    {%if relata.credito > 0 %}
+                                                                        C. Credito: R$ {{relata.credito}}<br/>
+                                                                    {%endif%}
+                                    
+                                                                    {%if faltante > 0%}
+                                                                    <h4><strong>Troco: R$ {{frm_pg}}</strong></h4>
+                                                                    {%endif%}
+                                                                <h3><strong> </strong></h3>
+                                                            </div>
+                                                            <p>-------------corte-aqui----------------</p>
+                                                            <div class="container">
+                                                                <h2 class="text-center"><strong>Cozinha</strong></h2>
+                                                                <h4><strong>Pedido: {{relata.id}} </strong></h4>
+                                                                <strong>LISTA DE PEDIDOS :</strong><br/>
+                                                                {{relata.pedido|safe}}
+                                                            </div>
+                                                            <p>-------------corte-aqui----------------</p>
+                                                            <div class="container">
+                                                            <h2><strong>Entrega</strong></h2>
+                                                            <h4><strong>Pedido: {{relata.id}} </strong></h4>
+                                                            <h4>
+                                                            {{relata.venda}} {{relata.mesa.numero}}
+                                                            </h4>
+                                                            <h4><strong>R$: {{relata.total_pedido}}</strong></h4>
+                                                                {%if relata.dinheiro > 0 %}
+                                                                    Dinheiro: R$ {{relata.dinheiro}}<br/>
+                                                                {%endif%}
+                                                                {%if relata.pix > 0 %}
+                                                                    Pix: R$ {{relata.pix}}<br/>
+                                                                {%endif%}
+                                                                {%if relata.debito > 0 %}
+                                                                    C .Debito: R$: {{relata.debito}}<br/>
+                                                                {%endif%}
+                                                                {%if relata.credito > 0 %}
+                                                                    C. Credito: R$ {{relata.credito}}<br/>
+                                                                {%endif%}
+                                
+                                                                {%if faltante > 0 %}
+                                                                <h4><strong>Troco: R$ {{faltante}}</strong></h4>
+                                                                {%endif%}
+                                                            <h3><strong> </strong></h3>
+                                                        </div>
+                                
+                                                        </div>
+                                                    </div>
+                                            </div>
+                                            {% else %}
+                                            <div id="print" class="conteudo">
+                                                <div class="form-group col-md-12">
+                                                        <div class="form-group" >
+                                                            <div>
+                                                                
+                                                                <h5>{{relata.venda}}</h5>
+                                                                <h5>{{relata.telefone}}</h5>
+                                                            </div>
+                                                            <strong>Lanche Lista:</strong><br>
+                                                            &nbsp;{{relata.pedido|safe}}
+                                                            <div class="form-group">
+                                
+                                                            <h4><strong>R$: {{relata.total_pedido}}</strong></h4>
+                                                                {%if relata.dinheiro > 0 %}
+                                                                    Dinheiro: R$ {{relata.dinheiro}}<br/>
+                                                                {%endif%}
+                                                                {%if relata.pix > 0 %}
+                                                                    Pix: R$ {{relata.pix}}<br/>
+                                                                {%endif%}
+                                                                {%if relata.debito > 0 %}
+                                                                    C .Debito: R$: {{relata.debito}}<br/>
+                                                                {%endif%}
+                                                                {%if relata.credito > 0 %}
+                                                                    C. Credito: R$ {{relata.credito}}<br/>
+                                                                {%endif%}
+                                
+                                                                {%if faltante > 0%}
+                                                                <h4><strong>Troco: R$ {{frm_pg}}</strong></h4>
+                                                                {%endif%}
+                                                            <h3><strong> </strong></h3>
+                                                        </div>
+                                                            <p>-------------corte-aqui----------------</p>
+                                                            <div class="container">
+                                                        <h2><strong>Cozinha</strong></h2>
+                                                        <h4><strong>Pedido: {{relata.id}} </strong></h4>
+                                                            <strong>LISTA DE PEDIDOS :</strong><br/>
+                                                            {{relata.pedido|safe}}
+                                                        </div>
+                                                            <p>-------------corte-aqui----------------</p>
+                                                            <div class="container">
+                                                            <h2><strong>Entrega</strong></h2>
+                                                            <h4><strong>Pedido: {{pedido.id}} </strong></h4>
+                                                            <p>
+                                                            &nbsp;{{relata.nome}} <br/>
+                                                            {%if relata.endereco%}
+                                                            &nbsp;{{relata.telefone}}<br/>
+                                                            &nbsp;{{relata.endereco}}, {{relata.numero}}<br/>
+                                                            &nbsp;{{relata.complemento}}<br/>
+                                                            &nbsp;{{relata.bairro}}<br/>
+                                                            &nbsp;{{relata.municipio}}-{{relata.uf}}<br/>
+                                                        {%endif%}
+                                                            </p>
+                                                            <h4><strong>R$: {{relata.total_pedido}}</strong></h4>
+                                                                {%if relata.dinheiro > 0 %}
+                                                                    Dinheiro: R$ {{relata.dinheiro}}<br/>
+                                                                {%endif%}
+                                                                {%if relata.pix > 0 %}
+                                                                    Pix: R$ {{relata.pix}}<br/>
+                                                                {%endif%}
+                                                                {%if relata.debito > 0 %}
+                                                                    C .Debito: R$: {{relata.debito}}<br/>
+                                                                {%endif%}
+                                                                {%if relata.credito > 0 %}
+                                                                    C. Credito: R$ {{relata.credito}}<br/>
+                                                                {%endif%}
+                                
+                                                                {%if faltante > 0 %}
+                                                                <h4><strong>Troco: R$ {{faltante}}</strong></h4>
+                                                                {%endif%}
+                                                            <h3><strong> </strong></h3>
+                                                        </div>
+                                
+                                                        </div>
+                                                    </div>
+                                            </div>
+                                            {% endif %}
+                                            </div>
+                                        <div class="modal-footer">
+                                            <button type="submit" onclick="cont()" class="btn btn-primary">Imprimir</button>
+                                        </div>    
+                                    </div>
+                                </div>
+                            </div>    
+                        </div>
+                    </div>
+                <br/>
+                {%endfor%}
+                {% else %}
+                    <p class="alert alert-warning">Sem pedido na lista.</p>
+                {% endif %}
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                {% if entrega %}
+                {% for relata in entrega%}
+                <form action="{% url 'pedido:pedido_recebido' relata.id %}"  method="POST" >
+                    {% csrf_token%}
+                    <input type="hidden" name="relata_id" value="{{relata.id}}"> 
+                    <div class="card border-success mb-12" style="max-width: 15rem; max-height: 10rem; left:5px ">
+                        <div class="card-header"> 
+                            Entregador <span class"full-right"> <button type="submit" class="btn btn-hight btn-sm">
+                                <i class="fa fa-check"></i></button> </span>
+                        </div>
+                        <div class="card-body text-success">
+                            <a type="button" href="#" data-bs-toggle="modal" data-bs-target="#myModal{{relata.id}}" >
+                                <i type='submit'  class="fa fa-print">
+                                    <p> Pedido: {{relata.id}} {{relata.venda}} <p>
+                                    <h5 class="card-title">R$: {{relata.total_pedido}}.</h5>
+                                </i>    
+                            </a>
+                            <div class="modal fade" style="color:black;" id="myModal{{relata.id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <figure>
+                                                        <img id="logo" name="logo"  src="{{request.user.loja.image.url}}" style="width:100px; height:100px; margin-left:10px;; margin-right:10px; " >
+                                                    </figure>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <h2>{{request.user.loja}}</h2>
+                                                    <a>{{request.user.loja.telefone}}</a><br/>
+                                                    <a>{{request.user.loja.cnpj}}</a>
+                                                </div>    
+                                            </div>    
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                          </div>
+                                          <div class="modal-body"  >
+                                            {% if relata.venda == "Balcão" %}
+                                            
+                                            <div id="print" class="conteudo">
+                                                <div class="form-group col-md-12">
+                                                        <div class="form-group" >
+                                                            <div>
+                                                                <h5>{{relata.venda}}</h5>
+                                                            </div>
+                                                            <strong>Lanche Lista:</strong><br>
+                                                            &nbsp;{{relata.pedido|safe}}
+                                                            <div class="form-group">
+                                                                <h4><strong>R$: {{relata.total_pedido}}</strong></h4>
+                                                                    {%if relata.dinheiro > 0 %}
+                                                                        Dinheiro: R$ {{relata.dinheiro}}<br/>
+                                                                    {%endif%}
+                                                                    {%if relata.pix > 0 %}
+                                                                        Pix: R$ {{relata.pix}}<br/>
+                                                                    {%endif%}
+                                                                    {%if relata.debito > 0 %}
+                                                                        C .Debito: R$: {{relata.debito}}<br/>
+                                                                    {%endif%}
+                                                                    {%if relata.credito > 0 %}
+                                                                        C. Credito: R$ {{relata.credito}}<br/>
+                                                                    {%endif%}
+                                    
+                                                                    {%if faltante > 0%}
+                                                                    <h4><strong>Troco: R$ {{frm_pg}}</strong></h4>
+                                                                    {%endif%}
+                                                                <h3><strong> </strong></h3>
+                                                            </div>
+                                                            <p>-------------corte-aqui----------------</p>
+                                                            <div class="container">
+                                                                <h2 class="text-center"><strong>Cozinha</strong></h2>
+                                                                <h4><strong>Pedido: {{relata.id}} </strong></h4>
+                                                                <strong>LISTA DE PEDIDOS :</strong><br/>
+                                                                {{relata.pedido|safe}}
+                                                            </div>
+                                                            <p>-------------corte-aqui----------------</p>
+                                                            <div class="container">
+                                                            <h2><strong>Entrega</strong></h2>
+                                                            <h4><strong>Pedido: {{relata.id}} </strong></h4>
+                                                            <h4>
+                                                            &nbsp;{{relata.venda}}
+                                                            </h4>
+                                                            <h4><strong>R$: {{relata.total_pedido}}</strong></h4>
+                                                                {%if relata.dinheiro > 0 %}
+                                                                    Dinheiro: R$ {{relata.dinheiro}}<br/>
+                                                                {%endif%}
+                                                                {%if relata.pix > 0 %}
+                                                                    Pix: R$ {{relata.pix}}<br/>
+                                                                {%endif%}
+                                                                {%if relata.debito > 0 %}
+                                                                    C .Debito: R$: {{relata.debito}}<br/>
+                                                                {%endif%}
+                                                                {%if relata.credito > 0 %}
+                                                                    C. Credito: R$ {{relata.credito}}<br/>
+                                                                {%endif%}
+                                
+                                                                {%if faltante > 0 %}
+                                                                <h4><strong>Troco: R$ {{faltante}}</strong></h4>
+                                                                {%endif%}
+                                                            <h3><strong> </strong></h3>
+                                                        </div>
+                                
+                                                        </div>
+                                                    </div>
+                                            </div>
+                                            {% elif relata.venda == "Mesa" %}
+                                            <div id="print" class="conteudo">
+                                                <div class="form-group col-md-12">
+                                                    
+                                                        <div class="form-group" >
+                                                            <div>
+                                                                <h5>{{relata.venda}}</h5>
+                                                            </div>
+                                                            <strong>Lanche Lista:</strong><br>
+                                                            &nbsp;{{relata.pedido|safe}}
+                                                            <div class="form-group">
+                                                                <h4><strong>R$: {{relata.total_pedido}}</strong></h4>
+                                                                    {%if relata.dinheiro > 0 %}
+                                                                        Dinheiro: R$ {{relata.dinheiro}}<br/>
+                                                                    {%endif%}
+                                                                    {%if relata.pix > 0 %}
+                                                                        Pix: R$ {{relata.pix}}<br/>
+                                                                    {%endif%}
+                                                                    {%if relata.debito > 0 %}
+                                                                        C .Debito: R$: {{relata.debito}}<br/>
+                                                                    {%endif%}
+                                                                    {%if relata.credito > 0 %}
+                                                                        C. Credito: R$ {{relata.credito}}<br/>
+                                                                    {%endif%}
+                                    
+                                                                    {%if faltante > 0%}
+                                                                    <h4><strong>Troco: R$ {{frm_pg}}</strong></h4>
+                                                                    {%endif%}
+                                                                <h3><strong> </strong></h3>
+                                                            </div>
+                                                            <p>-------------corte-aqui----------------</p>
+                                                            <div class="container">
+                                                                <h2 class="text-center"><strong>Cozinha</strong></h2>
+                                                                <h4><strong>Pedido: {{relata.id}} </strong></h4>
+                                                                <strong>LISTA DE PEDIDOS :</strong><br/>
+                                                                {{relata.pedido|safe}}
+                                                            </div>
+                                                            <p>-------------corte-aqui----------------</p>
+                                                            <div class="container">
+                                                            <h2><strong>Entrega</strong></h2>
+                                                            <h4><strong>Pedido: {{relata.id}} </strong></h4>
+                                                            <h4>
+                                                            {{relata.venda}} {{relata.mesa.numero}}
+                                                            </h4>
+                                                            <h4><strong>R$: {{relata.total_pedido}}</strong></h4>
+                                                                {%if relata.dinheiro > 0 %}
+                                                                    Dinheiro: R$ {{relata.dinheiro}}<br/>
+                                                                {%endif%}
+                                                                {%if relata.pix > 0 %}
+                                                                    Pix: R$ {{relata.pix}}<br/>
+                                                                {%endif%}
+                                                                {%if relata.debito > 0 %}
+                                                                    C .Debito: R$: {{relata.debito}}<br/>
+                                                                {%endif%}
+                                                                {%if relata.credito > 0 %}
+                                                                    C. Credito: R$ {{relata.credito}}<br/>
+                                                                {%endif%}
+                                
+                                                                {%if faltante > 0 %}
+                                                                <h4><strong>Troco: R$ {{faltante}}</strong></h4>
+                                                                {%endif%}
+                                                            <h3><strong> </strong></h3>
+                                                        </div>
+                                
+                                                        </div>
+                                                    </div>
+                                            </div>
+                                            {% else %}
+                                            <div id="print" class="conteudo">
+                                                <div class="form-group col-md-12">
+                                                        <div class="form-group" >
+                                                            <div>
+                                                               
+                                                                <h5>{{relata.venda}}</h5>
+                                                                <h5>{{relata.telefone}}</h5>
+                                                            </div>
+                                                            <strong>Lanche Lista:</strong><br>
+                                                            &nbsp;{{relata.pedido|safe}}
+                                                            <div class="form-group">
+                                
+                                                            <h4><strong>R$: {{relata.total_pedido}}</strong></h4>
+                                                                {%if relata.dinheiro > 0 %}
+                                                                    Dinheiro: R$ {{relata.dinheiro}}<br/>
+                                                                {%endif%}
+                                                                {%if relata.pix > 0 %}
+                                                                    Pix: R$ {{relata.pix}}<br/>
+                                                                {%endif%}
+                                                                {%if relata.debito > 0 %}
+                                                                    C .Debito: R$: {{relata.debito}}<br/>
+                                                                {%endif%}
+                                                                {%if relata.credito > 0 %}
+                                                                    C. Credito: R$ {{relata.credito}}<br/>
+                                                                {%endif%}
+                                
+                                                                {%if faltante > 0%}
+                                                                <h4><strong>Troco: R$ {{frm_pg}}</strong></h4>
+                                                                {%endif%}
+                                                            <h3><strong> </strong></h3>
+                                                        </div>
+                                                            <p>-------------corte-aqui----------------</p>
+                                                            <div class="container">
+                                                        <h2><strong>Cozinha</strong></h2>
+                                                        <h4><strong>Pedido: {{relata.id}} </strong></h4>
+                                                            <strong>LISTA DE PEDIDOS :</strong><br/>
+                                                            {{relata.pedido|safe}}
+                                                        </div>
+                                                            <p>-------------corte-aqui----------------</p>
+                                                            <div class="container">
+                                                            <h2><strong>Entrega</strong></h2>
+                                                            <h4><strong>Pedido: {{pedido.id}} </strong></h4>
+                                                            <p>
+                                                            &nbsp;{{relata.nome}} <br/>
+                                                            {%if relata.endereco%}
+                                                            &nbsp;{{relata.telefone}}<br/>
+                                                            &nbsp;{{relata.endereco}}, {{relata.numero}}<br/>
+                                                            &nbsp;{{relata.complemento}}<br/>
+                                                            &nbsp;{{relata.bairro}}<br/>
+                                                            &nbsp;{{relata.municipio}}-{{relata.uf}}<br/>
+                                                        {%endif%}
+                                                            </p>
+                                                            <h4><strong>R$: {{relata.total_pedido}}</strong></h4>
+                                                                {%if relata.dinheiro > 0 %}
+                                                                    Dinheiro: R$ {{relata.dinheiro}}<br/>
+                                                                {%endif%}
+                                                                {%if relata.pix > 0 %}
+                                                                    Pix: R$ {{relata.pix}}<br/>
+                                                                {%endif%}
+                                                                {%if relata.debito > 0 %}
+                                                                    C .Debito: R$: {{relata.debito}}<br/>
+                                                                {%endif%}
+                                                                {%if relata.credito > 0 %}
+                                                                    C. Credito: R$ {{relata.credito}}<br/>
+                                                                {%endif%}
+                                
+                                                                {%if faltante > 0 %}
+                                                                <h4><strong>Troco: R$ {{faltante}}</strong></h4>
+                                                                {%endif%}
+                                                            <h3><strong> </strong></h3>
+                                                        </div>
+                                
+                                                        </div>
+                                                    </div>
+                                            </div>
+                                            {% endif %}
+                                          </div>
+                                        <div class="modal-footer">
+                                            <button type="submit" onclick="cont()" class="btn btn-primary">Imprimir</button>
+                                        </div>    
+                                    </div>
+                                </div>
+                            </div>     
+                        </div>
+                    </div>
+                </form>
+                <br/>
+                {%endfor%}
+                {% else %}
+                <p class="alert alert-warning">Sem pedido na lista.</p>
+                {% endif %}
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                {% if finalizado %}
+                {% for relata in finalizado%}
+                <form action="" method="POST" >
+                    {% csrf_token%}
+                    <input type="hidden" name="relata_id" value="{{relata.id}}"> 
+                    <div class="card border-success mb-12" style="max-width: 15rem; max-height: 10rem; left:5px ">
+                        <div class="card-header"> 
+                            Finalizado <span class"full-right"> <a type="submit" class="btn btn-hight btn-sm">
+                                <i class="fa fa-check"></i></a> </span>
+                        </div>
+                        <div class="card-body text-success">
+                            
+                            <a type="button" href="#" data-bs-toggle="modal" data-bs-target="#myModal{{relata.id}}" >
+                                <i type='submit'  class="fa fa-print">
+                                    <p> Pedido: {{relata.id}}<p>
+                                    <h5 class="card-title">R$: {{relata.total_pedido}}.</h5>
+                                </i>    
+                            </a>
+                            <div class="modal fade" style="color:black;" id="myModal{{relata.id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <figure>
+                                                        <img id="logo" name="logo"  src="{{request.user.loja.image.url}}" style="width:100px; height:100px; margin-left:10px;; margin-right:10px; " >
+                                                    </figure>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <h2>{{request.user.loja}}</h2>
+                                                    <a>{{request.user.loja.telefone}}</a><br/>
+                                                    <a>{{request.user.loja.cnpj}}</a>
+                                                </div>    
+                                            </div>    
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                          </div>
+                                          <div class="modal-body"  >
+                                            {% if relata.venda == "Balcão" %}
+                                            
+                                            <div id="print" class="conteudo">
+                                                <div class="form-group col-md-12">
+                                                        <div class="form-group" >
+                                                            <div>
+                                                                <h5>{{relata.venda}}</h5>
+                                                            </div>
+                                                            <strong>Lanche Lista:</strong><br>
+                                                            &nbsp;{{relata.pedido|safe}}
+                                                            <div class="form-group">
+                                                                <h4><strong>R$: {{relata.total_pedido}}</strong></h4>
+                                                                    {%if relata.dinheiro > 0 %}
+                                                                        Dinheiro: R$ {{relata.dinheiro}}<br/>
+                                                                    {%endif%}
+                                                                    {%if relata.pix > 0 %}
+                                                                        Pix: R$ {{relata.pix}}<br/>
+                                                                    {%endif%}
+                                                                    {%if relata.debito > 0 %}
+                                                                        C .Debito: R$: {{relata.debito}}<br/>
+                                                                    {%endif%}
+                                                                    {%if relata.credito > 0 %}
+                                                                        C. Credito: R$ {{relata.credito}}<br/>
+                                                                    {%endif%}
+                                    
+                                                                    {%if faltante > 0%}
+                                                                    <h4><strong>Troco: R$ {{frm_pg}}</strong></h4>
+                                                                    {%endif%}
+                                                                <h3><strong> </strong></h3>
+                                                            </div>
+                                                            <p>-------------corte-aqui----------------</p>
+                                                            <div class="container">
+                                                                <h2 class="text-center"><strong>Cozinha</strong></h2>
+                                                                <h4><strong>Pedido: {{relata.id}} </strong></h4>
+                                                                <strong>LISTA DE PEDIDOS :</strong><br/>
+                                                                {{relata.pedido|safe}}
+                                                            </div>
+                                                            <p>-------------corte-aqui----------------</p>
+                                                            <div class="container">
+                                                            <h2><strong>Entrega</strong></h2>
+                                                            <h4><strong>Pedido: {{relata.id}} </strong></h4>
+                                                            <h4>
+                                                            &nbsp;{{relata.venda}}
+                                                            </h4>
+                                                            <h4><strong>R$: {{relata.total_pedido}}</strong></h4>
+                                                                {%if relata.dinheiro > 0 %}
+                                                                    Dinheiro: R$ {{relata.dinheiro}}<br/>
+                                                                {%endif%}
+                                                                {%if relata.pix > 0 %}
+                                                                    Pix: R$ {{relata.pix}}<br/>
+                                                                {%endif%}
+                                                                {%if relata.debito > 0 %}
+                                                                    C .Debito: R$: {{relata.debito}}<br/>
+                                                                {%endif%}
+                                                                {%if relata.credito > 0 %}
+                                                                    C. Credito: R$ {{relata.credito}}<br/>
+                                                                {%endif%}
+                                
+                                                                {%if faltante > 0 %}
+                                                                <h4><strong>Troco: R$ {{faltante}}</strong></h4>
+                                                                {%endif%}
+                                                            <h3><strong> </strong></h3>
+                                                        </div>
+                                
+                                                        </div>
+                                                    </div>
+                                            </div>
+                                            {% elif relata.venda == "Mesa" %}
+                                            <div id="print" class="conteudo">
+                                                <div class="form-group col-md-12">
+                                                    
+                                                        <div class="form-group" >
+                                                            <div>
+                                                                <h5>{{relata.venda}}</h5>
+                                                            </div>
+                                                            <strong>Lanche Lista:</strong><br>
+                                                            &nbsp;{{relata.pedido|safe}}
+                                                            <div class="form-group">
+                                                                <h4><strong>R$: {{relata.total_pedido}}</strong></h4>
+                                                                    {%if relata.dinheiro > 0 %}
+                                                                        Dinheiro: R$ {{relata.dinheiro}}<br/>
+                                                                    {%endif%}
+                                                                    {%if relata.pix > 0 %}
+                                                                        Pix: R$ {{relata.pix}}<br/>
+                                                                    {%endif%}
+                                                                    {%if relata.debito > 0 %}
+                                                                        C .Debito: R$: {{relata.debito}}<br/>
+                                                                    {%endif%}
+                                                                    {%if relata.credito > 0 %}
+                                                                        C. Credito: R$ {{relata.credito}}<br/>
+                                                                    {%endif%}
+                                    
+                                                                    {%if faltante > 0%}
+                                                                    <h4><strong>Troco: R$ {{frm_pg}}</strong></h4>
+                                                                    {%endif%}
+                                                                <h3><strong> </strong></h3>
+                                                            </div>
+                                                            <p>-------------corte-aqui----------------</p>
+                                                            <div class="container">
+                                                                <h2 class="text-center"><strong>Cozinha</strong></h2>
+                                                                <h4><strong>Pedido: {{relata.id}} </strong></h4>
+                                                                <strong>LISTA DE PEDIDOS :</strong><br/>
+                                                                {{relata.pedido|safe}}
+                                                            </div>
+                                                            <p>-------------corte-aqui----------------</p>
+                                                            <div class="container">
+                                                            <h2><strong>Entrega</strong></h2>
+                                                            <h4><strong>Pedido: {{relata.id}} </strong></h4>
+                                                            <h4>
+                                                            {{relata.venda}} {{relata.mesa.numero}}
+                                                            </h4>
+                                                            <h4><strong>R$: {{relata.total_pedido}}</strong></h4>
+                                                                {%if relata.dinheiro > 0 %}
+                                                                    Dinheiro: R$ {{relata.dinheiro}}<br/>
+                                                                {%endif%}
+                                                                {%if relata.pix > 0 %}
+                                                                    Pix: R$ {{relata.pix}}<br/>
+                                                                {%endif%}
+                                                                {%if relata.debito > 0 %}
+                                                                    C .Debito: R$: {{relata.debito}}<br/>
+                                                                {%endif%}
+                                                                {%if relata.credito > 0 %}
+                                                                    C. Credito: R$ {{relata.credito}}<br/>
+                                                                {%endif%}
+                                
+                                                                {%if faltante > 0 %}
+                                                                <h4><strong>Troco: R$ {{faltante}}</strong></h4>
+                                                                {%endif%}
+                                                            <h3><strong> </strong></h3>
+                                                        </div>
+                                
+                                                        </div>
+                                                    </div>
+                                            </div>
+                                            {% else %}
+                                            <div id="print" class="conteudo">
+                                                <div class="form-group col-md-12">
+                                                        <div class="form-group" >
+                                                            <div>
+                                                               
+                                                                <h5>{{relata.venda}}</h5>
+                                                                <h5>{{relata.telefone}}</h5>
+                                                            </div>
+                                                            <strong>Lanche Lista:</strong><br>
+                                                            &nbsp;{{relata.pedido|safe}}
+                                                            <div class="form-group">
+                                
+                                                            <h4><strong>R$: {{relata.total_pedido}}</strong></h4>
+                                                                {%if relata.dinheiro > 0 %}
+                                                                    Dinheiro: R$ {{relata.dinheiro}}<br/>
+                                                                {%endif%}
+                                                                {%if relata.pix > 0 %}
+                                                                    Pix: R$ {{relata.pix}}<br/>
+                                                                {%endif%}
+                                                                {%if relata.debito > 0 %}
+                                                                    C .Debito: R$: {{relata.debito}}<br/>
+                                                                {%endif%}
+                                                                {%if relata.credito > 0 %}
+                                                                    C. Credito: R$ {{relata.credito}}<br/>
+                                                                {%endif%}
+                                
+                                                                {%if faltante > 0%}
+                                                                <h4><strong>Troco: R$ {{frm_pg}}</strong></h4>
+                                                                {%endif%}
+                                                            <h3><strong> </strong></h3>
+                                                        </div>
+                                                            <p>-------------corte-aqui----------------</p>
+                                                            <div class="container">
+                                                        <h2><strong>Cozinha</strong></h2>
+                                                        <h4><strong>Pedido: {{relata.id}} </strong></h4>
+                                                            <strong>LISTA DE PEDIDOS :</strong><br/>
+                                                            {{relata.pedido|safe}}
+                                                        </div>
+                                                            <p>-------------corte-aqui----------------</p>
+                                                            <div class="container">
+                                                            <h2><strong>Entrega</strong></h2>
+                                                            <h4><strong>Pedido: {{pedido.id}} </strong></h4>
+                                                            <p>
+                                                            &nbsp;{{relata.nome}} <br/>
+                                                            {%if relata.endereco%}
+                                                            &nbsp;{{relata.telefone}}<br/>
+                                                            &nbsp;{{relata.endereco}}, {{relata.numero}}<br/>
+                                                            &nbsp;{{relata.complemento}}<br/>
+                                                            &nbsp;{{relata.bairro}}<br/>
+                                                            &nbsp;{{relata.municipio}}-{{relata.uf}}<br/>
+                                                        {%endif%}
+                                                            </p>
+                                                            <h4><strong>R$: {{relata.total_pedido}}</strong></h4>
+                                                                {%if relata.dinheiro > 0 %}
+                                                                    Dinheiro: R$ {{relata.dinheiro}}<br/>
+                                                                {%endif%}
+                                                                {%if relata.pix > 0 %}
+                                                                    Pix: R$ {{relata.pix}}<br/>
+                                                                {%endif%}
+                                                                {%if relata.debito > 0 %}
+                                                                    C .Debito: R$: {{relata.debito}}<br/>
+                                                                {%endif%}
+                                                                {%if relata.credito > 0 %}
+                                                                    C. Credito: R$ {{relata.credito}}<br/>
+                                                                {%endif%}
+                                
+                                                                {%if faltante > 0 %}
+                                                                <h4><strong>Troco: R$ {{faltante}}</strong></h4>
+                                                                {%endif%}
+                                                            <h3><strong> </strong></h3>
+                                                        </div>
+                                
+                                                        </div>
+                                                    </div>
+                                            </div>
+                                            {% endif %}
+                                          </div>
+                                        <div class="modal-footer">
+                                            <button type="submit" onclick="cont()" class="btn btn-primary">Imprimir</button>
+                                        </div>    
+                                    </div>
+                                </div>
+                            </div>        
+                        </div>
+                    </div>
+                </form>
+                <br/>
+                {%endfor%}
+                {% else %}
+                <p class="alert alert-warning">Sem pedido na lista.</p>
+                {% endif %}
+            </div>
+
+        </div>
+    </div>
+</div>
+</div>
+
+
+
+<script>
+    function voltar(){
+      window.history.back();
+    }
+</script>
+<script>
+    function cont(){
+        var conteudo = document.getElementById('print').innerHTML;
+        tela_impressao = window.open('about:blank');
+        tela_impressao.document.write(conteudo);
+        tela_impressao.window.print();
+        tela_impressao.window.close();
+    }
+    
+</script>
+
+
+
+

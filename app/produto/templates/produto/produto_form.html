@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<div class="container">
+    <a href="{% url 'produto:produto_list' %}" >Voltar</a>
+    <h1>{{titulo}}</h1>
+    <p class="lead" >
+        Preencha todos os campos obrigatorios
+    </p>
+    <form  action="."  method="POST" enctype="multipart/form-data"  >
+    {% csrf_token %}
+        {{form.on_field_errors}}
+        <div class="row">
+          
+            <div class="col-md-4 mb-3">
+                {{form.image|as_crispy_field}}
+                <figure>
+                    <img id="id_img" name="img"  src="{{object.image.url}}" style="width:390px; height:235px; margin-left:10px;; margin-right:10px; " >
+                </figure>
+            </div>
+           
+            <div class="col-md-6 mb-3">
+                <div class="row">
+                    {{form.nome|as_crispy_field}}
+                    <div class="col-md-6 mb-3">
+                        {{form.categoria|as_crispy_field}}
+                        {{form.codigo|as_crispy_field}}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        {{form.data_compra|as_crispy_field}}
+                        {{form.data_validade|as_crispy_field}}
+                      
+                    </div>
+                </div>    
+            </div>
+                     
+        </div>
+        
+        <div class="row">
+            <div class="col-md-5 ">
+                {{form.descricao|as_crispy_field}}
+            </div>
+            <div class="col-md-5">
+                <div class="row">
+                    <div  class="col-md-6 mb-3">
+                        {{form.preco_compra|as_crispy_field}}
+                        {{form.preco|as_crispy_field}}
+                        {{form.estoque|as_crispy_field}}
+                    </div>
+                    <div  class="col-md-6 mb-3">
+                        {{form.estoque_minimo|as_crispy_field}}
+                        <div class="row">
+                            <div class="col-md-3">
+                                {{form.ativo|as_crispy_field}}
+                            </div>
+                            <div class="col-md-9">
+                                {{form.controle_estoque|as_crispy_field}}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label> 
+                                <button type="button" class="btn btn-primary " data-bs-toggle="modal" data-bs-target="#ingrediente">
+                                    Composição para o Produto 
+                                    <i type='submit'  class="fa fa-list"></i>
+                                </button>
+                            </label>
+                            <div class="modal fade" id="ingrediente" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title-center" id="exampleModalLabel">Ingredientes para compor Produto</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                            
+                                            </button>
+                                        </div>
+                                        <div class="modal-body" >
+                                            {{form.imgrediente|as_crispy_field}}
+                                       </div>
+                                    <div class="modal-footer">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>    
+                    </div>
+                </div>    
+                <button type="submit" class="btn btn-primary btn-block" >
+                    {% autoescape off %}
+                    {{icone}}
+                    {% endautoescape %}
+                    {{botao}}
+                </button>
+            </div>
+        </div> 
+    
+    </form>
+</div>
+
+
+
+
+   
+{% endblock %}

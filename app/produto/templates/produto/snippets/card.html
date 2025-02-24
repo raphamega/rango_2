@@ -1,0 +1,21 @@
+
+<div class="col-md-12">
+    <div class="row">
+        <div class="col-md-2">
+            <picture>
+               <img  src="{{ instance.image.url }}" class="d-block w-100" style="width: 70px; height: 70px; border-radius: 360px; "  alt="{{ instance.titulo }}">
+            </picture>
+        </div>
+        <div class="col-md-6" >
+            <h4><strong>{{instance.nome|safe}}</strong></h3>
+            <div class="col-md-10" >
+                {{instance.descricao|safe | truncatewords:10}}
+            </div>
+        </div>
+        <div class="col-md-4" style="margin-block: auto;" >
+            <h4><strong>R$: {{instance.preco|safe}}</strong><h3>
+                {% include 'produto/snippets/update-cart.html' with pedido=pedido usuario_id=usuario produto_id=instance  loja_id=loja%}
+        </div>
+    </div>
+</div>
+<br/>

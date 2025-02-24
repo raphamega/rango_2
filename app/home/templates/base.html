@@ -1,0 +1,38 @@
+{%load static %}
+{% load crispy_forms_tags %}
+<!DOCTYPE html>
+<html lang="pt-br">
+
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}"> 
+        <title>RCM - Kinquilharias</title>
+        
+        {%include 'base/css.html'%}
+        
+
+    </head>
+    <body>
+        <main>
+            {% block header %}
+                {% include 'base/navbar.html' with loja=loja %}
+                {% include 'base/alerta.html' with notificacao=notificacao %}
+            {% endblock header%}
+            <br/>
+            <div class="container">
+             {%block content %}
+
+
+             {%endblock content%}
+            </div>
+        </main>
+        <footer class="footer">
+            <div class="container">
+              {% include 'base/rodape2.html' %}
+            </div>
+        </footer>
+        
+    </body>
+    {% include 'base/js.html' %}
+</html>

@@ -1,0 +1,59 @@
+{% extends 'base.html'  %}
+{% block content %}
+{% comment %} {% include 'loja/base/alerta.html' with notificacao=notificacao %} {% endcomment %}
+<div class="container">
+    <a href="{% url 'estoque:estoque_list' %}"></a>
+    <h2>{{object}}</h2>
+    <div class="col-sm-6">
+        <table class="table table-user-information">
+            <tbody>
+                <tr>
+                    <th class="text-right"> Total da NF</th>
+                    <td>{{object.total}}                </td>
+                </tr>
+                <tr>
+                    <th class="text-right">Data</th>
+                    <td>{{object.dia|safe}}</td>
+                    
+                </tr>
+                <tr>
+                    <th class="text-right">Movimento</th>
+                    <td>
+                        {%if object.movimento == "e"%}
+                           <p style="color:green;" >Entrada</p>
+                         {% else%}  
+                         <p style="color:green;" >Saida</p>
+                        {%endif%} 
+                        
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <table class="table table-striped">
+        <thead>
+            <tr class="text-right" >
+                <th class="text-center">Produtos</th>
+                <th>Quantidade</th>
+                <th> NCM</th>
+                <th>Validade</th>
+                <th class="text-right" >Vl Unitario</th>
+                <th class="text-right" >Valor Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for obj in nota.item.all%}
+            <tr class="text-right">
+            <td class="text-left" ><a href="{{obj.produto.get_absolute_url}}">{{obj.produto}}</a></td>
+            <td class="text-right">{{obj.quantidade}}</td>
+            <td>{{obj.ncm}}</td>
+            <td>{{obj.data_validade}}</td>
+            <td class="text-right">{{obj.preco_unid}}</td>
+            <td class="text-right" >{{obj.preco}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock content%}

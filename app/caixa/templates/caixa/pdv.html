@@ -1,0 +1,503 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<div style="margin-border:10px;">
+    <div class="form-group  text-justifilde">
+        <div class="form-group" xmlns="http://www.w3.org/1999/html">
+            <div class="row"> 
+                <div class="col-md-4">
+<!--                    {#% include 'loja/base/alerta.html' with notificacao=notificacao %}-->
+                </div>  
+                <div class="col-md-4">
+                    <h2 class="text-center">Pedido: {{pedido.id}}  </h2 >
+                </div>
+                <div class="col-md-4">
+                    <div class="container">
+                        {% comment %} {#% include 'produto/snippets/status-loja.html' %} {% endcomment %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="col-md-3">
+                        <h3>Lista de produtos</h3>
+                        <form method='GET' action='{% url "caixa:query" pedido.id %}' class="form my-2 my-lg-0" search-form style="width: 100%; border-bottom: 1px solid #000000;" >
+                            <div class="form-group">
+                                <input class="form-control" type="search" autocomplete="off" placeholder="Digite o nome do produto" name='q' aria-label="Search" value='{{ request.GET.q }}'>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-outline-primary" type="submit"> Procurar</button>
+                                        </span>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <a href="{% url 'caixa:registradora_home' pedido.pk %}" class="btn btn-light">Limpar</a>
+                                    </div>
+
+                                </div> 
+                            </div>    
+                        </form>
+                        <br/>
+                        {% if produto.exists %}
+                        {% for produto in produto %}
+                            {% if produto.categoria == "f" %}
+                                <form  method="POST" action="{% url 'caixa:registradora_Item' produto.id %}"  data-endpoint="{% url 'caixa:registradora_Item' produto.id %}"  class="form">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="loja_id" value="{{loja.id}}" />
+                                    <input type="hidden" name="produto_id" value="{{produto.id}}" />
+                                    <input type="hidden" name="pedido_id" value="{{pedido.id}}" />
+                                    <span class='submit-span'>
+                                        <button type='submit' class='btn btn-light btn-block'>
+                                            <strong><span class="pull-left">{{produto.nome|safe|truncatechars:20}}</span><span class="pull-right">{{produto.preco}}</span></strong>
+                                            {% comment %} <i type='submit'  class="fa fa-shopping-cart"></i> {% endcomment %}
+                                        </button>
+                                    </span>
+                                </form>
+                          {%endif%}
+                        {% endfor %}
+                        {% for produto in produto %}
+                            {% if produto.categoria == "b" %}
+                                <form  method="POST" action="{% url 'caixa:registradora_Item' produto.id %}"  data-endpoint="{% url 'caixa:registradora_Item' produto.id %}"  class="form">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="loja_id" value="{{loja.id}}" />
+                                    <input type="hidden" name="produto_id" value="{{produto.id}}" />
+                                    <input type="hidden" name="pedido_id" value="{{pedido.id}}" />
+                                    <span class='submit-span'>
+                                        <button type='submit' class='btn btn btn-light btn-block'>
+                                            <strong><span class="pull-left">{{produto.nome|safe|truncatechars:20}}</span><span class="pull-right">{{produto.preco}}</span></strong>
+                                            {% comment %} <i type='submit'  class="fa fa-shopping-cart"></i> {% endcomment %}
+                                        </button>
+                                    </span>
+                                </form>
+                        {%endif%}
+                    {% endfor %}
+                    {% else %}
+                    <p class="alert alert-warning">Sem mesa na lista.</p>
+                    {% endif %}
+                    </div>
+                    <div class="col-md-1"></div>
+                    <div class="col-md-3">
+                        <h3>Lista de Pedidos</h3>
+                        <div class="form-group col-md-12">
+                            <div class="form-group" style="size:5px;">
+                                {% for item in item %}  R$: {{item.preco}}
+                                <div style="width: 100%; border-bottom: 1px solid #000000; ">
+                                    <input type="hidden" name="pedido_id" value="{{pedido.id}}">
+                                    <input type="hidden" name="loja_id" value="{{loja.id}}">
+                                    <div class="col-md-12">
+                                        <h5><strong>{{ item.qt|safe }} x {{ item.produto.nome|safe|truncatewords:20}}</strong></h5>
+                                        <div class="row">
+                                            <div class="col-md-6 ">
+                                                {{item.observacao}}
+                                            </div>
+                                            <div class="col-md-6">
+                                                {% if item.item_acrescimo %}
+                                                <div class="container">
+                                                    
+                                                    <a type="button" href="{% url 'pedido:acrescimo_list' item.id %}"  data-toggle="modal" data-target="#exampleModal{{item.id}}">
+                                                        Acrescimos.                                                   
+                                                    </a>
+
+                                                    <div class="modal fade" id="exampleModal{{item.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel{{item.id}}" aria-hidden="true">
+                                                        <div class="modal-dialog" role="document">
+                                                            <div class="modal-content">
+                        
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                {%endif%}
+                                            </div>
+                                        </div>
+                                        <div class="row ">
+                                            <div class="col-md-4 ">
+                                                <button type="button" class="btn btn-lg" data-toggle="modal" data-target="#observacao{{item.id}}">
+                                                <i type='submit'  class="fa fa-edit"></i> 
+                                                </button>
+                                                <form method='POST' action='{% url "caixa:observacao" %}' data-endpoint='{% url "caixa:observacao" %}' class="form">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="loja_id" value="{{loja.id}}">
+                                                    <div class="modal fade" id="observacao{{item.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel{{item.id}}" aria-hidden="true">
+                                                        <div class="modal-dialog" role="document">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h5 class="modal-title" id="exampleModalLabel{{item.id}}">Observação</h5>
+                                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                    </button>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    <input type="hidden" name="item_id" value="{{ item.id }}">
+                                                                    <input type="hidden" name="pedido_id" value="{{ pedido.id }}">
+                                                                    <div class="col-md-9">
+                                                                        <textarea name="item_obs" cols="39" rows="10">{{item.observacao}}</textarea>
+                                                                    </div>
+                                                                    <div class="col-md-1">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="submit" class="btn btn-primary">Save changes</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>    
+                                                        
+                                                </form> 
+                                            </div>       
+                                            </div>
+                                            <div class="col-md-4 ">
+                                                    {% if acre_list %}
+                                                    {% if item.produto.categoria == "b" %}
+                                                    
+                                                    {% else %}
+                                                    <button type="button" class="btn btn-lg" data-toggle="modal" data-target="#acrescimo{{item.id}}">
+                                                        <i type='submit'  class="fa fa-plus"></i>
+                                                    </button>
+                                                    {% endif %}
+                                                    <input type="hidden" name="loja_id" value="{{loja.id}}">
+                                                    <div class="modal fade" id="acrescimo{{item.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel{{item.id}}" aria-hidden="true">
+                                                        <div class="modal-dialog" role="document">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                <h5 class="modal-title" id="acrescimoLabel{{item.id}}">Acrescimos</h5>
+                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    <input type="hidden" name="item_id" value="{{ item.id }}">
+                                                                    <div class="col-md-12">
+                                                                        {% for adicionar in acre_list %}
+                                                                        <form method="POST" action="{% url 'caixa:registradora_acrescimo' %}" data-endpoint='{% url "caixa:registradora_acrescimo" %}' class="form-group">
+                                                                            {% csrf_token %}
+                                                                            <div class="container">
+                        
+                                                                                <input type="hidden" name="loja_id" value="{{loja.id}}" />
+                                                                                <input type="hidden" name="produto_id" value="{{adicionar.id}}" />
+                                                                                <input type="hidden" name="pedido_id" value="{{pedido.id}}" />
+                                                                                <input type="hidden" name="add_id" value="{{adicionar.id}}" />
+                                                                                <input type="hidden" name="item_id" value="{{item.id}}" />
+                                                                                <div class="row" style="width: 100%; border-bottom: 1px solid #000000;">
+                                                                                    <div class="col-md-6">{{adicionar.nome}}</div>
+                                                                                    <div class="col-md-3">R$: {{adicionar.preco}}</div>
+                                                                                    <div class="col-md-2">
+                                                                                        <span class='submit-span'>
+                                                                                        <button type='submit' class='btn btn-success' >
+                                                                                            <i type='submit'  class="fa fa-shopping-cart"></i>
+                                                                                        </button>
+                                                                                        </span>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </form>
+                                                                        <br/> {% endfor %}
+                                                                    </div>
+                                                                </div>
+                                                                {% comment %} <div class="modal-footer">
+                                                                    <button type="submit" class="btn btn-primary">Save changes</button>
+                                                                </div> {% endcomment %}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    {%endif%}
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <form  method='POST' action='{% url "caixa:registradora_remove" %}' data-endpoint='{% url "pedido:remove" %}' class="form"> 
+                                                        {% csrf_token %}
+                                                        <input type="hidden"  name="remove" value="{{ item.id }}"/>
+                                                        <input type="hidden" name="loja_id" value="{{loja.id}}">
+                                                        <input type="hidden" name="pedido_id" value="{{pedido.id}}">
+                                                        <button type='submit'class='btn btn-link btn-lg' style="color:red;">
+                                                            <i class="fa fa-trash" aria-hidden="true"></i>
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <br/> {% endfor %}
+                                    </div>
+                                </div>
+                    </div>                
+                    <div class="col-md-1"></div>
+                    <div class="col-md-4">
+                        <div class="row">
+                            <div style="width: 100%; border-bottom: 1px solid #000000; ">
+                                <a type="button" href="{% url 'pedido:mesa_list' %}" ><i type='submit'  class="fa fa-table">&nbsp;Mesas & Pedidos</i></a>
+                                &nbsp;&nbsp;&nbsp;
+                                <a type="button" href="#" data-bs-toggle="modal" data-bs-target="#myModal2"><i type='submit'  class="fa fa-truck">&nbsp;Entrega</i></a>
+                                &nbsp;&nbsp;&nbsp;
+                                <a type="button" href="#" data-bs-toggle="modal" data-bs-target="#myModal"><i type='submit'  class="fa fa-print">&nbsp;Imprimir</i></a>
+
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <form method='POST' action='{% url "caixa:registradora_pagamento" pedido.pk %}' data-endpoint='{% url "caixa:registradora_pagamento" pedido.id %}' class="form">    
+                                {%csrf_token%}
+                                <br/>
+                                <div class="form-group">
+                                    <h3>Total: R$ <a href="#" name="totalvl" >{{total}}</a> </h3>
+                                        <input type="hidden"  name="totalvl" value="{{total}}"/>
+                                </div>
+                                <div class="form-group" style="width: 100%; border-bottom: 1px solid #000000;">
+                                    <div class="form-group">
+                                        <label>Dinheiro: <input type="text"  style="width:200px;"  name="dinheiro" data-mask="###.###.##0,00" data-mask-reverse="true" id="id_dinheiro" class="form-control" value="{{pedido.dinheiro}}" /></label>
+                                        <label>PIX: <input type="text" style="width:200px;"  name="pix" data-mask="###.###.##0,00" data-mask-reverse="true" id="id_pix" class="form-control" value="{{pedido.pix}}" /></label>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Cartão Debito: <input type="text" style="width:200px;" name="debito" data-mask="###.###.##0,00" data-mask-reverse="true" id="id_debito" class="form-control" value="{{pedido.debito}}" /></label>
+                                        <label>Cartão Credito: <input type="text" style="width:200px;"  name="credito" data-mask="###.###.##0,00" data-mask-reverse="true" id="id_credito" class="form-control" value="{{pedido.credito}}" /></label>
+                                    </div>
+                                    (tecle enter para adicionar os valores)
+                                    <button type="submit" class="btn btn-light "></button>
+                                </div>
+                                <div class="row">
+                                    <h3>Recebido: R$ <a style="color:green;" >{{recebido}}</a> </h3>
+                                </div>
+                                <div class="row">  
+                                    {% if faltante < 0%}
+                                    <h2>Falta: R$ <a style="color:red;">{{faltante|safe}}</a></h2>
+                                    {% endif%}
+                                    {% if faltante > 0%}
+                                    <h2>Troco: R$ <a style="color:green;">{{faltante|safe}}</a></h2>
+                                    {% endif%}
+                                </div>
+                                <input type="hidden" name="troco" value="{{faltante}}" >
+                                                        
+                            
+                            </form>
+                            {%if item.exists %}
+                                {%if faltante >= 0%}
+                                <form method='POST' name="entrega" action="{% url 'caixa:registradora_aceitar_pedido' pedido.id %}" data-endpoint="{% url 'caixa:registradora_aceitar_pedido' pedido.id %}">    
+                                    {%csrf_token%}
+                                    <button type="submit" class="btn btn-primary btn-block" data-bs-toggle="modal" data-bs-target="#myModal" >Finalizar Pedido</button>
+                                </form>
+                                {%endif%}
+                            {%endif%}
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+</div>
+    <div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title-center" id="exampleModalLabel{{pedido.id}}">Entregar</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+
+                    </button>
+                </div>
+                <div class="modal-body" >
+                    <div class="form-group" style="width: 100%; border-bottom: 1px solid #000000;" >
+                        <div class="row">
+                            {% if mesa.exists %}
+                            <div class="col-md-6">
+                                <form method='POST' id="id_mesa" action='{% url "caixa:registradora_retirar_mesa" pedido.id %}' data-endpoint='{% url "caixa:registradora_retirar_mesa" pedido.id %}' style="width: 100%; border-right: 1px solid #000000;">
+                                    {%csrf_token%}
+                                    <div class="row">
+                                        <h5> Mesa </h5>
+                                        <div class="col-md-6">
+                                            <select name="mesa" type="select" style="width:100px;" class="form-select"  id="id_mesa" > 
+                                                <option >-----------------</option>
+                                                {% for p in mesa %}
+                                                    <option name="mesa" value="{{p.id }}" >{{p.numero}}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <button class=" btn btn-primary btn-block full-right">
+                                                <i type='submit'  class="fa fa-table"></i>
+                                            </button>    
+                                        </div>    
+                                    </div>
+                                </form>
+                            </div>
+                            {% endif %}
+                            <div class="col-md-4">
+                                <form method='POST' id="id_pedido" action="{% url 'caixa:registradora_retirar_balcao' pedido.id %}" data-endpoint="{% url 'caixa:registradora_retirar_balcao' pedido.id %}" >
+                                    {%csrf_token%}
+                                    <h5>Balcão</h5>
+                                    <button class="btn btn-light btn-block" ><i type='submit'  class="fa fa-home">&nbsp;Retirada no Balcão</i></button>
+                                </form>
+                            </div>
+                        </div>
+                        <br/>
+                    </div>
+                    <form method='POST' id="id_entrega" action='{% url "caixa:registradora_entrega" pedido.id %}' data-endpoint='{% url "caixa:registradora_entrega" pedido.id %}'>
+                        {% csrf_token %}
+                           <div class="container">
+                                <div class="col-ms-12">
+                                    <h5> Residência</h5>
+                                    <div class="row">
+                                        <div class="col-sm-8">
+                                            <label for="inputAddress">Nome</label>
+                                            <input type="text" class="form-control" id="id_nome" placeholder="Nome do Cliente" name="nome" value="{{pedido.nome}}" >
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label for="inputNumber">Telefone</label>
+                                            <input type="text" class="form-control mask-telefone" id="id_telefone" data-mask="(00) 0 0000-0000" placeholder="Apenas Numeros" name="telefone" value="{{pedido.telefone}}" >
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-3">
+                                            <label for="inputZip">CEP</label>
+                                            <input type="text" class="form-control mask-cep" id="id_cep"  data-mask="00000-000" name="cep" value="{{pedido.cep}}" >
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <label for="inputAddress">Endereço</label>
+                                            <input type="text" class="form-control" id="id_endereco" placeholder="Av Vinicius de Morais, 25" name="endereco" value="{{pedido.endereco}}" >
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label for="inputNumber">Numero</label>
+                                            <input type="text" class="form-control" id="id_numero" placeholder="Numero 25" name="numero" value="{{pedido.numero}}" >
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <label for="inputAddress2">Complemento</label>
+                                            <input type="text" class="form-control" id="id_complemento" placeholder="Apartamento, casa, sítio..." name="complemento" value="{{pedido.complemento}}" >
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-5">
+                                            <label for="inputDistrict">Bairro</label>
+                                            <input type="text" class="form-control" id="id_bairro"  name="bairro" value="{{pedido.bairro}}" >
+                                        </div>
+                                        <div class="col-sm-5">
+                                            <label for="inputCity">Cidade</label>
+                                            <input type="text" class="form-control" id="id_municipio"  name="cidade" value="{{pedido.municipio}}" >
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <label for="inputState">Estado</label>
+                                            <input id="id_UF" class="form-control"  name="UF" value="{{pedido.uf}}" >
+                                        </div>
+                                    </div>
+                               </div>
+                           </div>
+                        <div class="modal-footer">
+                             <button type="submit" class="btn btn-primary">Save changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+   <div class="modal-dialog" role="document">
+     <div class="modal-content">
+       <div class="modal-header">
+         <h4 class="modal-title" id="myModalLabel">Pedido:{{pedido.id}}</h4>
+         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+       </div>
+       <div class="modal-body">
+           <div id="print" class="conteudo">
+               <div class="form-group col-md-12">
+                        <div class="form-group" >
+                            <div>
+                                <strong><h2>Pedido: {{pedido.id}}</h2></strong>
+                                <h5>{{pedido.nome}}</h5>
+                                <h5>{{pedido.telefone}}</h5>
+                            </div>
+                            <strong>Lanche Lista:</strong><br>
+                            &nbsp;{{pedido.pedido|safe}}
+                            <div class="form-group">
+
+                            <h4><strong>R$: {{pedido.total_pedido}}</strong></h4>
+                                {%if pedido.dinheiro > 0 %}
+                                    Dinheiro: R$ {{pedido.dinheiro}}<br/>
+                                {%endif%}
+                                {%if pedido.pix > 0 %}
+                                    Pix: R$ {{pedido.pix}}<br/>
+                                {%endif%}
+                                {%if pedido.debito > 0 %}
+                                    C .Debito: R$: {{pedido.debito}}<br/>
+                                {%endif%}
+                                {%if pedido.credito > 0 %}
+                                    C. Credito: R$ {{pedido.credito}}<br/>
+                                {%endif%}
+
+                                {%if faltante > 0%}
+                                <h4><strong>Troco: R$ {{frm_pg}}</strong></h4>
+                                {%endif%}
+                            <h3><strong> </strong></h3>
+                        </div>
+                            <p>-------------corte-aqui----------------</p>
+                            <div class="container">
+                        <h2><strong>Cozinha</strong></h2>
+                        <h4><strong>Pedido: {{pedido.id}} </strong></h4>
+                            <strong>LISTA DE PEDIDOS :</strong><br/>
+                            {{pedido.pedido|safe}}
+                        </div>
+                            <p>-------------corte-aqui----------------</p>
+                            <div class="container">
+                            <h2><strong>Entrega</strong></h2>
+                            <h4><strong>Pedido: {{pedido.id}} </strong></h4>
+                            <p>
+                            &nbsp;{{pedido.nome}} <br/>
+                            {%if pedido.endereco%}
+                            &nbsp;{{pedido.telefone}}<br/>
+                            &nbsp;{{pedido.endereco}}, {{pedido.numero}}<br/>
+                            &nbsp;{{pedido.complemento}}<br/>
+                            &nbsp;{{pedido.bairro}}<br/>
+                            &nbsp;{{pedido.municipio}}-{{pedido.uf}}<br/>
+                        {%endif%}
+                            </p>
+                            <h4><strong>R$: {{pedido.total_pedido}}</strong></h4>
+                                {%if pedido.dinheiro > 0 %}
+                                    Dinheiro: R$ {{pedido.dinheiro}}<br/>
+                                {%endif%}
+                                {%if pedido.pix > 0 %}
+                                    Pix: R$ {{pedido.pix}}<br/>
+                                {%endif%}
+                                {%if pedido.debito > 0 %}
+                                    C .Debito: R$: {{pedido.debito}}<br/>
+                                {%endif%}
+                                {%if pedido.credito > 0 %}
+                                    C. Credito: R$ {{pedido.credito}}<br/>
+                                {%endif%}
+
+                                {%if faltante > 0 %}
+                                <h4><strong>Troco: R$ {{faltante}}</strong></h4>
+                                {%endif%}
+                            <h3><strong> </strong></h3>
+                        </div>
+
+                        </div>
+                    </div>
+           </div>
+       </div>
+       <div class="modal-footer">
+           {% if faltante >= 0 %}
+                    <button type="submit" onclick="cont()" class="btn btn-primary">Imprimir</button>
+           {% endif%}
+       </div>
+     </div>
+   </div>
+</div>
+
+<script>
+    function voltar() {
+      window.history.back();
+    }
+</script>
+<script>
+    function cont(){
+        var conteudo = document.getElementById('print').innerHTML;
+        tela_impressao = window.open('about:blank');
+        tela_impressao.document.write(conteudo);
+        tela_impressao.window.print();
+        tela_impressao.window.close();
+    }
+    
+</script>
+
+
+    {% endblock content %}

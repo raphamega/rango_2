@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+{% block css %}
+<style>
+    span.required::after{
+        content:'*';
+        color:red;
+    }
+ 
+</style>
+{% endblock css %}
+<div class="col-md-12">
+    <div class="row">
+        {% if nota.status == "aberto" %}
+        <div class="col-md-2">    
+            {%include 'estoque/gerar_nota.html' with nota=nota %}
+        </div>
+        <div class="col-md-2">
+            <span class='pull-left'>
+                {%include 'estoque/estoque_delete.html' with delete=nota %}
+            </span>    
+        </div>
+        {% endif %}
+    </div>
+    <span class='pull-right'>
+        <a href="{% url 'estoque:estoque_list' %}" class="btn btn-danger"  >
+            <i class="fa fa-times"></i>
+        </a>
+    </span>
+</div>
+<div class="container">
+    <div class="text-center">
+        <h3><strong>Movimento do Estoque</strong></h3>
+    </div>
+    <br/>
+    <div class="form-group">
+        <div class="row">
+            <div class="col-md-2" style="border-right: 1px solid; color:black;">
+                
+                    <label for="id_nf" class="form-label requiredField">
+                        Nota Fiscal:<span class="asteriskField">*</span> 
+                        <h3>{{nota.nf}}</h3>
+                    </label>        
+                    <label for="id_dia" class="form-label requiredField">
+                        Data Nota:<span class="asteriskField">*</span> 
+                        <h3>{{nota.dia}}</h3>
+                    </label> 
+                    <label for="id_movimento" class="form-label requiredField">
+                        Movimento:<span class="asteriskField">*</span>
+                        {% if nota.movimento == "e" %}
+                            <h3>Entrada</h3>
+                        {% else %}
+                        <h3>Saida</h3>
+                        {% endif %}
+                            
+                    </label>    
+                    <label for="id_total" class="form-label requiredField">
+                        Valor Total da Nota <span class="asteriskField">*</span> 
+                        <input type="hidden" name="total"  data-mask="###. ###.000,00" data-mask-reverse="true" class="form-control mask-money textinput" placeholder="0,00" maxlength="14" required id="id_total" value=" {% if nota.total %} {{nota.total}} {% else %} 000 {% endif %} " />
+                        <h3>
+                            <span data-mask="###. ###.000,00" data-mask-reverse="true" class="mask-money">
+                                {{nota.total}}
+                            </span> 
+                        </h3>   
+                    </label>
+                                    
+                    <form method="POST" action="{% url 'estoque:nota_abrir' %}"  class="form-group" novalidate>
+                        {% csrf_token %}
+                        {{form1|crispy}} 
+                        <div class="col-sm-12" style="margin-top: 30px;" >
+                            <div class="form-inline button">
+                                <button type="submit" class="btn btn-primary" value="Adicionar">
+                                    <i class="fa fa-floppy-o">
+                                        {% autoescape off %}
+                                        {{iconeI}}
+                                        {% endautoescape %}
+                                        {{botaoI}}
+                                    </i>
+                                </button>
+                            </div>
+                        </div>    
+                    </form>
+            </div>
+            <div class="col-md-10">    
+                <div class="form-group">
+                    <form method="POST" name='estoque/add_item.html' action="{% url 'estoque:estoque_add' %}"  class="form-group" novalidate>
+                        {% csrf_token %}
+                        <input type="hidden" name="nota_id" value="{{nota.id}}"/>
+                        {{form.on_field_errors}}
+                        <div class="row">
+                            <div class="col-sm-5">
+                                {{form.produto|as_crispy_field}}
+                            </div>
+                            <div class="col-sm-3">
+                                {{form.data_validade|as_crispy_field}}
+                            </div>
+                            
+                            <div class="col-sm-2">
+                                {{form.ncm|as_crispy_field}}
+                            </div>
+                        </div>
+                        <div class="row" >
+                            <div class="col-sm-2">
+                                {{form.unidade|as_crispy_field}}
+                            </div>
+                            <div class="col-sm-2">
+                                {{form.quantidade|as_crispy_field}}
+                            </div>
+                            <div class="col-sm-2">             
+                                {{form.preco_unid|as_crispy_field}}
+                            </div>
+                            <div class="col-sm-2">    
+                                {{form.preco|as_crispy_field}}
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="row float-right">
+                                    <div class="col-sm-12" style="margin-top: 30px;" >
+                                        <div class="form-inline button">
+                                            <button type="submit" class="btn btn-primary" value="Adicionar">
+                                                <i class="fa fa-floppy-o">
+                                                    {% autoescape off %}
+                                                    {{iconeI}}
+                                                    {% endautoescape %}
+                                                    {{botaoI}}
+                                                </i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>        
+                </div>   
+            </div>
+        </div>   
+    </div>
+</div>
+<script>
+    function calcular(){
+        var valor1 = parseFloat(document.getElementById('id_quantidade').value, 10);
+        var valor2 = parseFloat(document.getElementById('id_preco_unid').value, 10);
+        var result = valor1*valor2;
+        var result2 = result.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'})
+        var result3 = result2.replace("R$","").replace(".","").replace(",",".")
+        document.getElementById('id_preco').value=result3;
+    }
+    {% comment %} <input id="txt1" type="text" value="1" onfocus="calcular()"/> {% endcomment %}
+    {% comment %} <input id="txt2" type="text" value="1" onblur="calcular()"/> {% endcomment %}
+    {% comment %} <input id="result" type="text"/> {% endcomment %}
+    {% comment %} var valor3 = valor2.replace(".","").replace(",","."); {% endcomment %}
+        {% comment %} console.log(valor3); {% endcomment %}
+        {% comment %} var valor4 = valor1 * parseFloat(valor3); {% endcomment %}
+        {% comment %} result = valor4.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'}); {% endcomment %}
+</script>
+    
+
+{% endblock content %}

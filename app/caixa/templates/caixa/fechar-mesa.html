@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="form-group">
+    <div class="row">
+      <div class="col-md-4">
+        <h1><strong class=" text-center">Mesa:</strong> {{mesa.numero}}</h1>
+      </div>
+      <div class="col-md-4 ">
+        <h1><strong class="text-center">Total:</strong> {{mesa.total}} </h1>
+      </div>    
+      <div class="col-md-3">
+        <h1><strong class="text-center">Total Ped:</strong> {{mesa.ped_mesa.count}} </h1>
+      </div>
+    </div>
+</div>    
+<div class="col-md-12" style="width: 100%; border-bottom: 1px solid #000000;" >
+    
+</div>
+<br/>
+<div class="col-md-12"  >
+<div class="row"> 
+    <div class="col-md-8">
+        <div class="form-group">
+            {% for item in mesa.ped_mesa.all %}
+                <div class="col-md-12" >
+                    <div class="row">
+                        <div class="col-md-3"  >
+                            <label class="text-leaft"><h5><strong>Pedido</strong>: {{item.id|safe}}</h5></label>
+                        </div>
+                        <div class="col-md-6">
+                            
+                            <label><p>{{item.pedido|safe}}</p></label>
+                        </div>
+                    </div>
+                    <div class="col-md-6" style="width: 100%; border-bottom: 1px solid #000000; " >
+                        <span class="text-center">
+                           <h1> R$: {{item.total_pedido}}</h1>
+                        </span>
+                    </div>
+                </div>
+            <br/>
+            {% endfor %}
+        </div>
+    </div> 
+    <div class="col-md-4">
+        {% comment %} <div class="row">
+            <div style="width: 100%; border-bottom: 1px solid #000000; ">
+                <a type="button" href="#" data-bs-toggle="modal" data-bs-target="#myModal"><i type='submit'  class="fa fa-print">&nbsp;Imprimir</i></a>
+                &nbsp;&nbsp;&nbsp;
+                <a type="button" href="#" data-bs-toggle="modal" data-bs-target="#myModal2"><i type='submit'  class="fa fa-truck">&nbsp;Entrega</i></a>
+                &nbsp;&nbsp;&nbsp;
+                <a type="button" href="{% url 'pedido:mesa_list' %}" ><i type='submit'  class="fa fa-table">&nbsp;Mesas & Pedidos</i></a>
+
+            </div>
+        </div> {% endcomment %}
+        <div class="form-group">
+            <form method='POST' action='{% url "caixa:registradora_pagamento_mesa" mesa.id %}' data-endpoint='{% url "caixa:registradora_pagamento" mesa.id %}' class="form">    
+                {%csrf_token%}
+                <br/>
+                <div class="form-group">
+                    <h3>Total: R$ <a href="#" name="totalvl" >{{mesa.total}}</a> </h3>
+                        <input type="hidden"  name="totalvl" value="{{mesa.total}}"/>
+                </div>
+                <div class="form-group" style="width: 100%; border-bottom: 1px solid #000000;">
+                    <div class="form-group">
+                        <label>Dinheiro: <input type="text"  style="width:200px;"  name="dinheiro" data-mask="###.###.##0,00" data-mask-reverse="true" id="id_dinheiro" class="form-control" value="{{mesa.dinheiro}}" /></label>
+                        <label>PIX: <input type="text" style="width:200px;"  name="pix" data-mask="###.###.##0,00" data-mask-reverse="true" id="id_pix" class="form-control" value="{{mesa.pix}}" /></label>
+                    </div>
+                    <div class="form-group">
+                        <label>Cartão Debito: <input type="text" style="width:200px;" name="debito" data-mask="###.###.##0,00" data-mask-reverse="true" id="id_debito" class="form-control" value="{{mesa.debito}}" /></label>
+                        <label>Cartão Credito: <input type="text" style="width:200px;"  name="credito" data-mask="###.###.##0,00" data-mask-reverse="true" id="id_credito" class="form-control" value="{{mesa.credito}}" /></label>
+                    </div>
+                    (tecle enter para adicionar os valores)
+                    <button type="submit" class="btn btn-light "></button>
+                </div>
+                <div class="row">
+                    <h3>Recebido: R$ <a style="color:green;" >{{recebido}}</a> </h3>
+                </div>
+                <div class="row">  
+                    {% if faltante < 0%}
+                    <h2>Falta: R$ <a style="color:red;">{{faltante|safe}}</a></h2>
+                    {% endif%}
+                    {% if faltante > 0%}
+                    <h2>Troco: R$ <a style="color:green;">{{faltante|safe}}</a></h2>
+                    {% endif%}
+                </div>
+                <input type="hidden" name="troco" value="{{faltante}}" >
+                                        
+            
+            </form>
+            {%if mesa %}
+                {%if faltante >= 0 %}
+                <form method='POST' name="entrega" action="{% url 'caixa:registradora_mesa_receber' mesa.id %}" data-endpoint="{% url 'caixa:registradora_mesa_receber' mesa.id %}">    
+                    {%csrf_token%}
+                    <button type="submit" class="btn btn-primary btn-block" data-bs-toggle="modal" data-bs-target="#myModal" >Finalizar Pedido</button>
+                </form>
+                {%endif%}
+            {%endif%}
+        </div>
+
+    </div>
+</div>
+</div>
+ 
+
+{%endblock%}

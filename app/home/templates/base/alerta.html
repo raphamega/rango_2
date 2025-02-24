@@ -1,0 +1,10 @@
+  <form action="." method="POST">
+    {% csrf_token%}
+    {{notificacao.id}}
+    {% if notificacao %}
+      <div id="id_do_elemento" class=" col-md-6  alert alert-warning" role="alert">
+        <a href="{% url 'produto:pedido_list' %}"><h1>Atenção PEDIDO CHEGANDO</h1></a>
+            
+      </div>
+    {% endif %}
+  </form>

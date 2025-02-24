@@ -1,0 +1,10 @@
+<form  method='POST' action='{% url "pedido:remove" %}'
+  data-endpoint='{% url "pedido:remove" %}'
+  class="form"> {% csrf_token %}
+  <input type="hidden"  name="remove" value="{{ item.id }}"/>
+  <input type="hidden" name="loja_id" value="{{loja.id}}">
+  <input type="hidden" name="pedido_id" value="{{pedido.id}}">
+  <button type='submit'class='btn btn-link btn-lg' style="color:red;">
+    <i class="fa fa-trash" aria-hidden="true"></i>
+  </button>
+</form>

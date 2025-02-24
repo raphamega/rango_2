@@ -1,0 +1,53 @@
+{% load static %}
+
+  <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+    <div class="container-fluid"><input type="hidden" name="loja_id" value="{{loja.id}}">
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#main_nav"  aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="main_nav">
+        <ul class="navbar-nav">
+          <li class="nav-item active">
+            <a class="nav-link" href="{% url 'loja:loja_home' %}" >Home<span class="sr-only"></span></a>
+          </li>
+          <li class="nav-item active">
+              <a class="nav-link" href="{% url 'loja:user-update'%}">Perfil<span class="sr-only"></span></a>
+          </li>
+          {% if  user.perfil.cpf %}
+          <li class="nav-item active">
+            <a class="nav-link" href="{%url 'loja:loja_update' %}" >Loja<span class="sr-only"></span></a>
+          </li>
+         {%endif%}
+          {%if request.user.loja.loja%}
+          <li class="nav-item active">
+            <a class="nav-link" href="{% url 'produto:produto_list' %}">Produto <span class="sr-only"></span></a>
+          </li>
+          {% comment %} <li class="nav-item active">
+            <a class="nav-link" href="{#% url 'produto:pedido_list' %}">Pedido <span class="sr-only"></span></a>
+          </li> {% endcomment %}
+          <li class="nav-item active">
+            <a class="nav-link " href="{% url 'estoque:estoque_list' %}" > Estoque <span class="sr-only"></span></a>
+          </li>
+          <li class="nav-item active">
+            <a class="nav-link" href="{% url 'caixa:caixa_home' %}"> Movimento do Caixa </a>
+          </li>
+          <li class="nav-item active">
+            <a class="nav-link" href="{% url 'caixa:registradora_home' 1 %}"> Frente de Caixa </a>
+          </li>
+          {%endif%}
+        </ul>
+      </div>
+        <div class="container-pull-right">
+          <span class="nav-item active">
+            User: {{ user.get_username }}<a href="{% url 'logout'%}"> Sair</a>
+          </span>
+        </div>
+    <!-- navbar-collapse.// -->
+    </div>
+    <!-- container-fluid.// -->
+  </nav>
+<br/><br/><br/>
+
+
+

@@ -1,0 +1,19 @@
+{%extends 'base.html'%}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+{%if request.user.is_authenticated%}
+    {% if  user.perfil.cpf %}
+        Bem vido ao sistema Sr(a) {{user.perfil.nome_completo}}.<br/>
+        {%if request.user.loja.loja%}
+            Sua Loja: {{request.user.loja.loja}} está :{% if .user.loja.aberto == True %} aberta {%else%} fechada {%endif%} . 
+        {%else%}
+        Cadastre sua Loja para liberar o app. <a href="{% url 'loja:loja_update' %}">Clique aqui</a>
+        {%endif%}
+    {% else %}
+    Você presisa completar seu cadastro. <a href="{% url 'loja:user-update' %}">Clique aqui</a>
+    {% endif %}
+{%endif%}    
+
+{%endblock content%}

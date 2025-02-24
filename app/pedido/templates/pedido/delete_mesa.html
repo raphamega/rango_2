@@ -1,0 +1,10 @@
+<form method='POST' action="{% url 'pedido:mesa_delete' mesa.id %}" class="form">
+    {% csrf_token %}
+    <div class="container">
+
+        <input type="hidden" name="mesa_id" value="{{mesa.id}}" />
+        <button type='submit'  class='btn btn-light'  >
+                <i class="fa fa-close "></i>
+        </button>
+    </div>
+</form>

@@ -1,0 +1,126 @@
+{% load static %} {% load crispy_forms_tags %} {% block content %}
+<div class="form-group col-md-12">
+    <div class="form-group">
+        {% for item in item %} {{item.id}}
+        <div style="width: 100%; border-bottom: 1px solid #000000; ">
+            <input type="hidden" name="pedido_id" value="{{pedido.id}}">
+            <input type="hidden" name="loja_id" value="{{loja.id}}">
+            <div class="col-md-12">
+                <h5><strong>{{ item.qt|safe }} x {{ item.produto.nome|safe|truncatewords:20}}</strong></h5>
+                <div class="row" style="size: 5px;">
+                    <div class="col-md-6 ">
+                        {{item.observacao}}
+                    </div>
+                    <div class="col-md-6">
+                        {% if item.item_acrescimo %}
+                        <div class="container">
+                            <a type="button" href="{% url 'pedido:acrescimo_list' item.id %}"  data-toggle="modal" data-target="#exampleModal{{item.id}}">
+                            Acrescimos.
+                          </a>
+                            <div class="modal fade" id="exampleModal{{item.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel{{item.id}}" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {%endif%}
+                    </div>
+                </div>
+                <div class="row ">
+                    <div class="col-md-4 ">
+                        <button type="button" class="btn btn-lg" data-toggle="modal" data-target="#observacao{{item.id}}">
+                          <i type='submit'  class="fa fa-edit"></i> 
+                        </button>
+                        <form method='POST' action='{% url "pedido:observacao" %}' data-endpoint='{% url "pedido:observacao" %}' class="form">
+                            {% csrf_token %}
+                            <input type="hidden" name="loja_id" value="{{loja.id}}">
+                            <div class="modal fade" id="observacao{{item.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel{{item.id}}" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel{{item.id}}">Observação</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                              </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <input type="hidden" name="item_id" value="{{ item.id }}">
+                                            <div class="col-md-9">
+                                                <textarea name="item_obs" cols="30" rows="10">{{item.observacao}}</textarea>
+                                            </div>
+                                            <div class="col-md-1">
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="submit" class="btn btn-primary">Save changes</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>    
+                                
+                        </form> 
+                    </div>
+                    <div class="col-md-4 ">
+                            {% if acre_list %}
+                            <button type="button" class="btn btn-lg" data-toggle="modal" data-target="#acrescimo{{item.id}}">
+                              <i type='submit'  class="fa fa-plus"></i>
+                            </button>
+                            <input type="hidden" name="loja_id" value="{{loja.id}}">
+                            <div class="modal fade" id="acrescimo{{item.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel{{item.id}}" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                          <h5 class="modal-title" id="acrescimoLabel{{item.id}}">Acrescimos</h5>
+                                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                          </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <input type="hidden" name="item_id" value="{{ item.id }}">
+                                            <div class="col-md-12">
+                                                {% for adicionar in adicionar %}
+                                                <form method="POST" action="{% url 'pedido:acrescimo' %}" data-endpoint='{% url "pedido:acrescimo" %}' class="form-group">
+                                                    {% csrf_token %}
+                                                    <div class="container">
+
+                                                        <input type="hidden" name="loja_id" value="{{loja.id}}" />
+                                                        <input type="hidden" name="produto_id" value="{{adicionar.id}}" />
+                                                        <input type="hidden" name="pedido_id" value="{{pedido.id}}" />
+                                                        <input type="hidden" name="add_id" value="{{adicionar.id}}" />
+                                                        <input type="hidden" name="item_id" value="{{item.id}}" />
+                                                        <div class="row" style="width: 100%; border-bottom: 1px solid #000000;">
+                                                            <div class="col-md-6">{{adicionar.nome}}</div>
+                                                            <div class="col-md-3">R$: {{adicionar.preco}}</div>
+                                                            <div class="col-md-2">
+                                                                <span class='submit-span'>
+                                                                  <button type='submit' class='btn btn-success' >
+                                                                      <i type='submit'  class="fa fa-shopping-cart"></i>
+                                                                  </button>
+                                                                </span>
+                                                              </div>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                                <br/> {% endfor %}
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="submit" class="btn btn-primary">Save changes</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {%endif%}
+                        </div>
+                        <div class="col-md-4">
+                            <input type="hidden" name="loja_id" value="{{loja.id}}"> {% include 'pedido/remove-product.html' with remove=item.id pedido_id=pedido loja_id=loja.id %}
+                        </div>
+                        </div>
+                    </div>
+                </div>
+                <br/> {% endfor %}
+            </div>
+        </div>
+        {% endblock %}

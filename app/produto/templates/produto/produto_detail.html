@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="container">
+    <a href="{% url 'produto:produto_list' %}" >Voltar</a>
+    <h1>{{object}}
+        <span class="pull-right">
+            <a href="{% url 'produto:produto_edit' object.id%}">
+                <button type="button" class="btn btn-success" >
+                    <span class=" fa fa-pencil"></span>Editar
+                </button>
+            </a>
+            <a href="{% url 'produto:produto_delete' object.id%}">
+                <button type="button" class="btn btn-danger" >
+                    <span class=" fa fa-trash-o"></span>Delete
+                </button>
+            </a>
+        </span>
+    </h1>
+    <div class="row">
+    <div class="col-sm-6">
+        <table class="table table-user-information">
+            <tbody>
+                <tr>
+                    <th class="text-right">Código</th>
+                    <td>{{object.codigo}}</td>
+                </tr>
+                    <th class="text-right">Ativo</th>
+                    {% if object.ativo == False %}
+                    <td style="color:red;">Não</td>
+                    {%else%}
+                    <td style="color:green;">Sim</td>
+                        {%endif%}
+                
+                <tr>
+                    <th class="text-right">Preço</th>
+                    <td ><a>R$: {{object.preco}}</a></td>
+                </tr>
+                <tr>
+                    <th class="text-right">Estoque</th>
+                    <td>{{object.estoque}}</td>
+                </tr>
+                <tr>
+                    <th class="text-right">Est. Minimo</th>
+                    <td>{{object.estoque_minimo}}</td>
+                </tr>
+                <tr>
+                    <th class="text-right">Descrição</th>
+                    <td>{{object.descricao}}</td>
+                </tr>
+                <tr>
+                    {% if object.imgrediente.exists %}
+                    <th class="text-right">Ingredientes</th>
+                    <td>
+                        {% for i in object.imgrediente.all  %}
+                        {% autoescape on %}
+                        <li> {{i}}.</li>
+                        {% endautoescape %}
+                        {% endfor %}
+                    </td>
+                    {% endif %}
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="col-sm-6">
+        <div class="col-md-12">
+            <figure class="picture" tabindex="0">
+                <img src="{{object.image.url}}" alt="">
+            </figure>
+            
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+    <div class='text-center'>
+        <h1>{{ title }}</h1>
+    </div>
+    <div class='container'>
+        <div class='row'>
+
+            <div class='col'>
+                <div class='col-sm-6 col-12'>
+                    {% if form %}
+                    <h3>{{ comentario}}</h3>
+                    <form method='POST'>
+                        {% csrf_token %}
+                        {{ form | crispy }}
+                        <br>
+                        <div class="text-center">
+                            <button type='submit'  class=' btn btn-primary'> Enviar   </button>
+                        </div>
+                    </form>
+                    {% else %}
+                    <h3>{{ comentario }}</h3>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

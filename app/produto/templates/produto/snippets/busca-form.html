@@ -1,0 +1,8 @@
+<form method='GET' action='{% url "produto:query" %}' class="form my-2 my-lg-0" search-form>
+  <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom shadow-sm">
+    <input class="form-control" type="search" placeholder="Digite oque está procurando" name='q' aria-label="Search" value='{{ request.GET.q }}'>
+<!--    <span class="input-group-btn">-->
+      <button class="btn btn-outline-primary" type="submit"> Procurar</button>
+<!--    </span>-->
+  </div>
+</form>

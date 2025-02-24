@@ -1,0 +1,45 @@
+{% extends 'home/base/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<br/><br/>
+<form class="container">
+     <div class="container">
+         <h1 class="text-center"><strong>Bull Dogs</strong></h1><br/>
+          <div class="container">
+            <h2 class="text-center"><strong>Lanches</strong></h2>
+            {% for produto in produto %}
+
+                <div class="row">
+                   <div class="col-md-9" >
+                        <h3><strong>{{produto.titulo|safe}}</strong></h3>
+                        {{produto.descricao|safe}}
+                   </div>
+                   <div class="col-md-3" >
+                       <br/>
+                        <h3><strong>R$ {{produto.preco|safe}}</strong><h3>
+                   </div>
+                </div>
+
+            {% endfor%}
+          </div>
+          <div class="container">
+              <br/><br/>
+              <h1 class="text-center"><strong>Bebidas</strong></h1>
+             {% for bebida in bebida %}
+                <div class="row">
+                   <div class="col-md-9">
+                        <h3><strong>{{bebida.titulo|safe}}</strong></h3>
+                        {{bebida.descricao|safe}}
+                   </div>
+                   <div class="col-md-3">
+                       <br/>
+                        <h3><strong>R$ {{bebida.preco|safe}}</strong><h3>
+                   </div>
+                </div>
+            {% endfor%}
+          </div>
+     </div>
+</form>
+{% endblock %}

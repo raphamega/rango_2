@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+
+<button onclick="window.print()">Imprimir</button>
+<a  type="button" class="btn btn-primary block" href="{% url 'bulldogs:list' %}"  >Voltar  </a>
+
+<body>
+<div class="text-center" style="width='5,8cm';">
+<label><h3>Bull Dogs<br/>
+(19) 9 93360249</h3>
+    {{ped.dia}}</label>
+<div class="continer">
+<h3>Caixa</h3>
+<div class="container" name="caixa">
+    <p>
+        <strong class="text-center"><h2>Pedido: {{ped.id}}</h2></strong>
+     {{ped.nome}} <br/>
+        &nbsp;{{ped.telefone}}<br/>
+        &nbsp;{{ped.cep}}<br/>
+        &nbsp;{{ped.logradouro}}, {{ped.numero}}<br/>
+        &nbsp;{{ped.bairro}}<br/>
+        &nbsp;{{ped.municipio}}-{{ped.uf}}<br/>
+        {{ped.complemento}}<br/>
+
+    </p>
+    <strong>Lanche Lista:</strong><br>
+
+
+    {% for item in item %}
+        {% if item.observacao %}
+            <label>{{ item.qt }} - {{item.titulo}}<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{item.observacao}}</label><br/>
+        {% else %}
+            <label>{{ item.qt }} - {{item.titulo}}<br/>
+        {% endif %}
+    {% endfor %}
+
+        <div class="form-group">
+
+    <H3><strong>R$: {{ped.total_pedido}} <br/> {{ped.frm_pg}}</strong></H3>
+    <H3><strong> </strong></H3>
+</div>
+        <p>---------------------</p>
+<div class="container" name="cozinha">
+    <h3>Cozinha</h3>
+<h2><strong>Pedido: {{ped.id}} </strong></h2>
+     <strong>LISTA DE PEDIDOS :</strong><br/>
+        {% for item in item %}
+            {% if item.observacao %}
+                <label>{{ item.qt }} - {{item.titulo}}<br/>
+                &nbsp;&nbsp;&nbsp;&nbsp;*{{item.observacao}}</label><br/>
+            {% else %}
+                <label>{{ item.qt }} - {{item.titulo}}<br/>
+            {% endif %}
+        {% endfor %}
+
+</div>
+      <p>---------------------</p>
+<div class="container" name="entrega">
+    <h3>Entrega</h3>
+    <strong class="text-center"><h2>Pedido: {{ped.id}}</h2></strong>
+    {% for refri in refri %}
+            {% if refri %}
+                <label>{{ refri.qt }} - {{refri.titulo}}<br/>
+            {% else %}
+                <label><br/>
+            {% endif %}
+        {% endfor %}
+    <p>
+    {{ped.nome}} <br/>
+    &nbsp;{{ped.telefone}}<br/>
+    &nbsp;{{ped.logradouro}}, {{ped.numero}}<br/>
+    &nbsp;{{ped.bairro}}<br/>
+    &nbsp;{{ped.municipio}}-{{ped.uf}}<br/>
+     &nbsp;{{ped.complemento}}<br/>
+    </p>
+    <H3><strong>R$: {{ped.total_pedido}} </br> {{ped.frm_pg}}</strong></H3>
+</div>
+</div>
+
+</body>
+<script>
+function voltar() {
+    window.history.back();
+}
+</script>
+</html>
