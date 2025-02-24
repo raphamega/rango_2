@@ -4,7 +4,7 @@ from firebase_admin import credentials, firestore, storage
 from django.conf import settings
 # Configurar a conexão com o Firestore
 
-cred = credentials.Certificate(os.path.join(settings.BASE_DIR,f"rango_bb48f.json"))
+cred = credentials.Certificate(os.path.join(settings.BASE_DIR,f"rango_bb48f.txt".json))
 firebase_admin.initialize_app(cred,{
     "storageBucket": "seu-projeto.appspot.com"  # Substitua pelo seu Firebase Storage
 })
